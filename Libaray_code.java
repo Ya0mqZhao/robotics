@@ -36,7 +36,6 @@ public class XRPDrivetrain {
     m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
     resetEncoders();
 
-    // Invert right side since motor is flipped
     m_rightMotor.setInverted(true);
   }
 
