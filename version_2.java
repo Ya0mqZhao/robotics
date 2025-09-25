@@ -53,35 +53,37 @@ public class Robot extends TimedRobot {
    * below with additional strings. If using the SendableChooser make sure to add them to the
    * chooser code above as well.
    */
-  @Override
-  public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
-
+int step = 0;
+@Override
+public void autonomousInit() {
     m_drivetrain.resetEncoders();
-  }
-
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {
-    double ts_start = m_drivetrain.getLeftDistanceInch();
-    double sy_start = m_drivetrain.getRightDistanceInch();
-    if(sy_start < 45.0){
-      m_drivetrain.arcadeDrive(0, 90.0); }
-    else {
-     m_drivetrain.arcadeDrive(0, 0.0);
+    step = 0;
+}
+@Override
+public void autonomousPeriodic() {
+    double Y = m_drivetrain.getLeftDistanceInch();
+    double X = m_drivetrain.getRightDistanceInch();
+    if (step == 0) {
+        if (X < 45) {
+            m_drivetrain.arcadeDrive(1,0);
+        } 
+        else {
+            m_drivetrain.arcadeDrive(0,0);
+            m_drivetrain.resetEncoders();
+            step = 1;
+        }
+    } 
+    else if (step == 1) {
+        if (Y < 20) {
+            m_drivetrain.arcadeDrive(0,1);
+        } 
+        else {
+            m_drivetrain.arcadeDrive(0,0);
+            m_drivetrain.resetEncoders();
+            step = 0;
+        }
     }
-    
-    // double ts_start = m_drivetrain.getLeftDistanceInch();
-    // double sy_start = m_drivetrain.getRightDistanceInch();
-    // if(ts_start < 26.0 && sy_start <26.0){
-    // m_drivetrain.arcadeDrive(90, 0.0); }
-    // else {
-    //   m_drivetrain.arcadeDrive(0, 0.0);
-  //  }
-  }
-
+}
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
