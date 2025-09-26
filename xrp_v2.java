@@ -6,9 +6,12 @@ package frc.robot;
 
 import javax.lang.model.util.ElementScanner14;
 
+import edu.wpi.first.wpilibj.AnalogAccelerometer;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.xrp.XRPGyro;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -22,7 +25,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private final XRPDrivetrain m_drivetrain = new XRPDrivetrain();
-
+  XRPGyro gyro = new XRPGyro();
+  AnalogInput sensor = new AnalogInput(2);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -53,37 +57,42 @@ public class Robot extends TimedRobot {
    * below with additional strings. If using the SendableChooser make sure to add them to the
    * chooser code above as well.
    */
-int step = 0;
-@Override
-public void autonomousInit() {
-    m_drivetrain.resetEncoders();
-    step = 0;
-}
-@Override
-public void autonomousPeriodic() {
-    double Y = m_drivetrain.getLeftDistanceInch();
-    double X = m_drivetrain.getRightDistanceInch();
-    if (step == 0) {
-        if (X < 45) {
-            m_drivetrain.arcadeDrive(1,0);
-        } 
-        else {
-            m_drivetrain.arcadeDrive(0,0);
-            m_drivetrain.resetEncoders();
-            step = 1;
-        }
-    } 
-    else if (step == 1) {
-        if (Y < 20) {
-            m_drivetrain.arcadeDrive(0,1);
-        } 
-        else {
-            m_drivetrain.arcadeDrive(0,0);
-            m_drivetrain.resetEncoders();
-            step = 0;
-        }
-    }
-}
+  int step = 0;
+  @Override
+  public void autonomousInit() {
+      m_drivetrain.resetEncoders();
+      gyro.reset();
+      step = 0;
+  }
+  @Override
+  public void autonomousPeriodic() {
+      double Y = m_drivetrain.getLeftDistanceInch();
+      double X = m_drivetrain.getRightDistanceInch();
+      double gyroValue = gyro.getAngle();
+      double sensorValue = sensor.getAverageVoltage();
+      if (step == 0) {
+          if (X < 1) {
+              m_drivetrain.arcadeDrive(1,0);
+          } 
+          else {
+              m_drivetrain.arcadeDrive(0,0);
+              m_drivetrain.resetEncoders();
+              gyro.reset();
+              step = 1;
+          }
+      } 
+      else if (step == 1) {
+          if (gyroValue < 180) {
+              m_drivetrain.arcadeDrive(0,0.5);
+          } 
+          else {
+              m_drivetrain.arcadeDrive(0,0);
+              m_drivetrain.resetEncoders();
+              step = 0;
+          }
+      } 
+  }
+  
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
@@ -107,3 +116,4 @@ public void autonomousPeriodic() {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+}
