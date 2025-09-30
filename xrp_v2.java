@@ -64,34 +64,33 @@ public class Robot extends TimedRobot {
       gyro.reset();
       step = 0;
   }
-  @Override
-  public void autonomousPeriodic() {
-      double Y = m_drivetrain.getLeftDistanceInch();
-      double X = m_drivetrain.getRightDistanceInch();
-      double gyroValue = gyro.getAngle();
-      double sensorValue = sensor.getAverageVoltage();
-      if (step == 0) {
-          if (X < 1) {
-              m_drivetrain.arcadeDrive(1,0);
-          } 
-          else {
-              m_drivetrain.arcadeDrive(0,0);
-              m_drivetrain.resetEncoders();
-              gyro.reset();
-              step = 1;
-          }
-      } 
-      else if (step == 1) {
-          if (gyroValue < 180) {
-              m_drivetrain.arcadeDrive(0,0.5);
-          } 
-          else {
-              m_drivetrain.arcadeDrive(0,0);
-              m_drivetrain.resetEncoders();
-              step = 0;
-          }
-      } 
-  }
+@Override
+public void autonomousPeriodic() {
+    double Y = m_drivetrain.getLeftDistanceInch();
+    double X = m_drivetrain.getRightDistanceInch();
+    double avgDist = (Y + X) / 2.0;
+    double gyroValue = gyro.getAngle();
+    double sensorValue = sensor.getAverageVoltage();
+
+    if (step == 0) {
+        if (avgDist < 20) {
+            m_drivetrain.arcadeDrive(0.5, 0);
+        } else {
+            m_drivetrain.arcadeDrive(0, 0);
+            m_drivetrain.resetEncoders();
+            step = 1;
+        }
+    } 
+    else if (step == 1) {
+        if (gyroValue < 90) {
+            m_drivetrain.arcadeDrive(0, 0.5); 
+        } else {
+            m_drivetrain.arcadeDrive(0, 0);
+            gyro.reset();
+            step = 0;
+        }
+    } 
+}}
   
   /** This function is called once when teleop is enabled. */
   @Override
