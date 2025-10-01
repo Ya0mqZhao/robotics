@@ -99,7 +99,9 @@ public void autonomousPeriodic() {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
+  double Y = m_controller.getLeftY();
+  double X = m_controller.getLeftX();
+  m.drivetrain.tankDrive(y-1,x-1)l;
   }
 
   /** This function is called once when the robot is disabled. */
