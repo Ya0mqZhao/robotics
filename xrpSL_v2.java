@@ -71,8 +71,10 @@ int step = 0;
       double gyroValue = gyro.getAngle();
       double sensorValue = sensor.getAverageVoltage();
       double average = (Y+X)/2;
-    if (average < 20) {
+    if (average < 18) {
         m_drivetrain.arcadeDrive(0.7, 0);
+            } else if (X > 22) { 
+        m_drivetrain.arcadeDrive(-0.7,0); 
     } else {
         m_drivetrain.arcadeDrive(0, 0);
     }
