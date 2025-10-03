@@ -75,14 +75,12 @@ int step = 0;
    double average = (Y+X)/2;
 System.out.println(gyroValue);
 if (sensorValue < 0.4) {
-  m_drivetrain.arcadeDrive(-1, 0);
+  m_drivetrain.arcadeDrive(1, 0);
   } else if (sensorValue > 0.6) {
-    m_drivetrain.arcadeDrive(1, 0);
+    m_drivetrain.arcadeDrive(0, 0.7);
   } else {
-    m_drivetrain.arcadeDrive(0, 1);
+    m_drivetrain.arcadeDrive(0,0);
   }
-  if (gyroValue < 5) {}
-}
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
