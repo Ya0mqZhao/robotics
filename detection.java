@@ -58,29 +58,38 @@ public class Robot extends TimedRobot {
    * chooser code above as well.
    */
 int step = 0;
-   @Override
-   public void autonomousInit() {
-   m_drivetrain.resetEncoders();
-   gyro.reset();
-   sensor.resetAccumulator();
-   step = 0;
-  }
-   @Override
-   public void autonomousPeriodic() {
-    sensor.getAverageValue();
-   double Y = m_drivetrain.getLeftDistanceInch();
-   double X = m_drivetrain.getRightDistanceInch();
-   double gyroValue = gyro.getAngle();
-   double sensorValue = sensor.getAverageVoltage();
-   double average = (Y+X)/2;
-System.out.println(gyroValue);
+@Override 
+public void autonomousInit() { 
+    m_drivetrain.resetEncoders(); 
+    gyro.reset(); 
+    sensor.resetAccumulator(); 
+    step = 0; 
+} 
+
+@Override 
+public void autonomousPeriodic() { 
+    sensor.getAverageValue(); 
+    double Y = m_drivetrain.getLeftDistanceInch(); 
+    double X = m_drivetrain.getRightDistanceInch(); 
+    double gyroValue = gyro.getAngle(); 
+    double sensorValue = sensor.getAverageVoltage(); 
+    double average = (Y+X)/2; 
+    System.out.println(gyroValue); 
+    
+if (step == 0) {
 if (sensorValue < 0.4) {
-  m_drivetrain.arcadeDrive(1, 0);
-  } else if (sensorValue > 0.6) {
-    m_drivetrain.arcadeDrive(0, 0.7);
-  } else {
-    m_drivetrain.arcadeDrive(0,0);
-  }
+    step = 1; 
+} else {
+    m_drivetrain.arcadeDrive(0.5, 0);
+}
+  } else if (step == 1) {
+      if (sensorValue > 0.6) {
+          step = 0; 
+ } else {
+  m_drivetrain.arcadeDrive(0, -0.5);
+        }
+    }
+}
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
