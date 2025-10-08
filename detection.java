@@ -77,19 +77,19 @@ public void autonomousPeriodic() {
     System.out.println(gyroValue); 
     
 if (step == 0) {
-if (sensorValue < 0.4) {
-    step = 1; 
-} else {
-    m_drivetrain.arcadeDrive(0.5, 0);
-}
-  } else if (step == 1) {
-      if (sensorValue > 0.6) {
-          step = 0; 
- } else {
-  m_drivetrain.arcadeDrive(0, -0.5);
-        }
-    }
-}
+      if (SensorValue < 0.4) {
+        step = 1;
+      } else {
+        m_drivetrain.arcadeDrive(1, 0);
+      }
+    } else if (step == 1) {
+      if (SensorValue > 0.6) {
+        step = 0;
+      } else {
+        m_drivetrain.arcadeDrive(0, 1);
+      }
+    } else if (SensorValue > 5) {
+      m_drivetrain.arcadeDrive(0, 0);
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
