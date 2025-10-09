@@ -76,19 +76,13 @@ public class Robot extends TimedRobot {
       double average = (Y+X)/2; 
       System.out.println(sensorValue); 
       
-  if (step == 0) {
-        if (sensorValue < 0.16) {
-          step = 1;
-        } else {
-          m_drivetrain.arcadeDrive(0.7, 0);//forward
+if (sensorValue < 0.16) {
+   m_drivetrain.arcadeDrive(0.7, 0);//forward
         }
-      } else if (step == 1) {
-        if (sensorValue > 0.47) {
-          step = 0;
-        } else {
-          m_drivetrain.arcadeDrive(0, 0.7);//turn
-        }
-      } else if (sensorValue <= 0.05) {
+else if (sensorValue > 0.47) {
+  m_drivetrain.arcadeDrive(0, 0.7);//turn
+}
+else (sensorValue <= 0.05) {
         m_drivetrain.arcadeDrive(-0.7, 0); } //go backward if its less than or equal to 0.05
       }
   /** This function is called once when teleop is enabled. */
