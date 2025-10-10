@@ -76,21 +76,23 @@ public void autonomousInit() {
       double average = (Y+X)/2; 
       System.out.println(sensorValue); 
       
-  if (step == 0) {
-        if (sensorValue < 0.16) {
-          step = 1;
-        } else {
-          m_drivetrain.arcadeDrive(0.7, 0);//forward
-        }
-      } else if (step == 1) {
-        if (sensorValue > 0.47) {
-          step = 0;
-        } else {
-          m_drivetrain.arcadeDrive(0, 0.7);//turn
-        }
-      } else if (sensorValue <= 0.05) {
-        m_drivetrain.arcadeDrive(-0.7, 0); } //go backward if its less than or equal to 0.05
-      }
+if (step == 0) {// Step 0: Move forward until sensorValue < 0.16
+    if (sensorValue < 0.16) {
+        step = 1;
+    } else {
+        m_drivetrain.arcadeDrive(0.7, 0); // forward
+    }
+} 
+else if (step == 1) { // Step 1: Turn until sensorValue > 0.47
+    if (sensorValue > 0.47) {
+        step = 0;
+    } else {
+        m_drivetrain.arcadeDrive(0, 0.7); // turn
+    }
+} 
+else if (sensorValue <= 0.05) {
+    m_drivetrain.arcadeDrive(-0.7, 0);//go back if too close
+}
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
