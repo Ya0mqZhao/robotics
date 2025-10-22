@@ -756,7 +756,7 @@ public class Robot extends TimedRobot {
           break;
           case 2://logic: check angle position
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            double currentX = swerve.getXPos();
+            double currentX = swerve.getXPos();//both define current position👇
             double currentY = swerve.getYPos();
             swerve.driveTo(currentX, currentY, -90.0); //double check to make sure
             if(swerve.atDriveGoal()){
@@ -786,9 +786,9 @@ public class Robot extends TimedRobot {
               autoStage=6; //go to stage 6
             }
             break;
-          case 6: //logic: take algae to Processor (or barge???)
+          case 6: //logic: take algae to Processor (or barge-unsure)
             swerve.driveTo(scoringPositionsX[28],scoringPositionsY[28], scoringHeadings[28]);//move to scoring point - processor
-            //swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
+            //swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge (unsure)
             if(swerve.atDriveGoal()){
               autoStage = 7; //Advance to the next stage if location correct
                   }
@@ -797,7 +797,7 @@ public class Robot extends TimedRobot {
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
             if (elevator.atSetpoint()){ //check its up
-              algaeYeeter.yeet; //toss
+              algaeYeeter.yeet(); //toss
               autoStage=8; //go to stage 8
                 }
             break;
