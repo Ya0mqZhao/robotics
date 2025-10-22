@@ -761,6 +761,7 @@ public class Robot extends TimedRobot {
             swerve.driveTo(currentX, currentY, -90.0); //double check to make sure
             if(swerve.atDriveGoal()){
               autoStage = 3;//go to next stage if correct
+            }
             break;
           case 3: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
