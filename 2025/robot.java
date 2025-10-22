@@ -749,9 +749,17 @@ public class Robot extends TimedRobot {
       case auto7:
         switch (autoStage) { 
           case 1:
-          // Auto 7, Stage 1 code goes here.
-          swerve.drive(1.0, 0.0, 0.0, false, 0.0, 0.0); // Attempts to drive forward at 1 meter per second, pushing the other robot along.
+            swerve.driveTo(scoringPositionsX[18],scoringPositionsY[18], scoringHeadings[18]); //move robot to reef
+            if(swerve.atDriveGoal()){
+              autoStage = 2; //Advance to the next stage if location correct
+            }
           break;
+          case 2:
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.L4) //rise, but to be determined
+            if (elevator.atSetpoint()){
+              autoStage = 3 //to the next stage
+            }
         }
       break;     
       
