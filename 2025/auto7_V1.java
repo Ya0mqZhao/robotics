@@ -803,7 +803,7 @@ public class Robot extends TimedRobot {
             break;
           case 8: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up(..?)
+            algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
             elevator.setLevel(Level.Bottom); //go back down
             break;
         }
