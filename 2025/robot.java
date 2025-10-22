@@ -754,24 +754,55 @@ public class Robot extends TimedRobot {
               autoStage = 2; //Advance to the next stage if location correct
             }
           break;
-          case 2://check position
+          case 2://logic: check angle position
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             double currentX = swerve.getXPos();
             double currentY = swerve.getYPos();
             swerve.driveTo(currentX, currentY, -90.0); //double check to make sure
             if(swerve.atDriveGoal()){
-              autoStage = 3; //Advance to the next stage if location correct
+              autoStage = 3;//go to next stage if correct
             break;
           case 3: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            elevator.setLevel(Level.L3) //rise, but to be determined
+            elevator.setLevel(Level.L3); //rise, but to be determined
+            AlgaeYeeter.ArmPosition.algae
             if (elevator.atSetpoint()){
-              AlgaeYeeter.ArmPosition.algae //algae down
-              autoStage = 3 //to the next stage
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+              autoStage = 4; //to the next stage
             }
             break;
           case 4: //logic: scoot back a little
+            coralTimer.restart(); //just scoot back for one sec (saw this in above command and thought its a good idea)
+            swerve.drive(-0.254, 0.0, 0.0, true, 0.0, 0.0);//10 inch in converesion of meter(adjust it based on need)
+            if (coralTimer.get() > 1.0) { //scoot back for 1 sec
+            autoStage = 5;
+            }
+          break;
+          case 5: //logic: lower back down to L1 or where algae dont touch bumper but sprint-able
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.L1); //back down to L1
+            if (elevator.atSetpoint()){ //check its back down
+              autoStage=6; //go to stage 6
+            }
+            break;
+          case 6: //logic: take algae to Processor(if its the wrong thing, blame mr P)
+            swerve.driveTo(scoringPositionsX[28],scoringPositionsY[28], scoringHeadings[28]);//move to scoring point
+            if(swerve.atDriveGoal()){
+              autoStage = 7; //Advance to the next stage if location correct
+                  }
+              break;
+          case 7: //logic: rise elevator, toss
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
+            if (elevator.atSetpoint()){ //check its up
+              algaeYeeter.yeet; //toss
+              autoStage=8; //go to stage 8
+                }
+            break;
+          case 8: //logic: close algae mode, lower back down
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up(..?)
+            elevator.setLevel(Level.Bottom); //go back down
             break;
         }
       break;     
