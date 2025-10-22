@@ -746,20 +746,33 @@ public class Robot extends TimedRobot {
         }
       break;
 
-      case auto7:
+      case auto7: //auto algae
         switch (autoStage) { 
-          case 1:
+          case 1://logic: move to a certain spot
             swerve.driveTo(scoringPositionsX[18],scoringPositionsY[18], scoringHeadings[18]); //move robot to reef
             if(swerve.atDriveGoal()){
               autoStage = 2; //Advance to the next stage if location correct
             }
           break;
-          case 2:
+          case 2://check position
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            elevator.setLevel(Level.L4) //rise, but to be determined
+            double currentX = swerve.getXPos();
+            double currentY = swerve.getYPos();
+            swerve.driveTo(currentX, currentY, -90.0); //double check to make sure
+            if(swerve.atDriveGoal()){
+              autoStage = 3; //Advance to the next stage if location correct
+            break;
+          case 3: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.L3) //rise, but to be determined
             if (elevator.atSetpoint()){
+              AlgaeYeeter.ArmPosition.algae //algae down
               autoStage = 3 //to the next stage
             }
+            break;
+          case 4: //logic: scoot back a little
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            break;
         }
       break;     
       
