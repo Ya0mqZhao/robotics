@@ -786,9 +786,8 @@ public class Robot extends TimedRobot {
               autoStage=6; //go to stage 6
             }
             break;
-          case 6: //logic: take algae to Processor (or barge-unsure)
-            swerve.driveTo(scoringPositionsX[28],scoringPositionsY[28], scoringHeadings[28]);//move to scoring point - processor
-            //swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge (unsure)
+          case 6: //logic: take algae to barge
+            swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
             if(swerve.atDriveGoal()){
               autoStage = 7; //Advance to the next stage if location correct
                   }
