@@ -746,7 +746,7 @@ public class Robot extends TimedRobot {
         }
       break;
 
-      case auto7: //auto algae
+      case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
           case 1://logic: move to a certain spot
             swerve.driveTo(scoringPositionsX[18],scoringPositionsY[18], scoringHeadings[18]); //move robot to reef
@@ -766,7 +766,6 @@ public class Robot extends TimedRobot {
           case 3: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             elevator.setLevel(Level.L3); //rise, but to be determined
-            AlgaeYeeter.ArmPosition.algae
             if (elevator.atSetpoint()){
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
               autoStage = 4; //to the next stage
@@ -774,7 +773,7 @@ public class Robot extends TimedRobot {
             break;
           case 4: //logic: scoot back a little
             coralTimer.restart(); //just scoot back for one sec (saw this in above command and thought its a good idea)
-            swerve.drive(-0.254, 0.0, 0.0, true, 0.0, 0.0);//10 inch in converesion of meter(adjust it based on need)
+            swerve.drive(0.0, 0.254 , 0.0, true, 0.0, 0.0);//10 inch in converesion of meter(adjust it based on need)
             if (coralTimer.get() > 1.0) { //scoot back for 1 sec
             autoStage = 5;
             }
