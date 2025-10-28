@@ -162,7 +162,7 @@ public class Robot extends TimedRobot {
 
       case auto7:
         // AutoInit 7 code goes here.
-        swerve.resetDriveController(scoringHeadings[21];//prepare robot
+        swerve.resetDriveController(scoringHeadings[21]);//prepare robot
         swerve.pushCalibration(true, 90.0); // Updates the robot's position on the field.
       break;
 
@@ -750,7 +750,7 @@ public class Robot extends TimedRobot {
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
           case 1://logic: move to a certain spot
-            swerve.driveTo(scoringPositionsX[21],scoringPositionsY[21], scoringHeadings[21]); //move robot to reef
+            swerve.driveTo(6, 4, 90); //move robot to reef
             if(swerve.atDriveGoal()){
               autoStage = 2; //Advance to the next stage if location correct
             }
@@ -761,14 +761,14 @@ public class Robot extends TimedRobot {
             double currentY = swerve.getYPos();
             swerve.driveTo(currentX, currentY, 90.0); //double check to make sure
             if(swerve.atDriveGoal()){
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
               autoStage = 3;//go to next stage if correct
             }
             break;
           case 3: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             elevator.setLevel(Level.L3); //rise, but to be determined
-            if (elevator.atSetpoint()){
-              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+            if (!algaeYeeter.algaeDetected()){
               autoStage = 4; //to the next stage
             }
             break;
@@ -803,7 +803,7 @@ public class Robot extends TimedRobot {
           case 8: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
-            elevator.setLevel(Level.Bottom); //go back down
+            elevator.setLevel(Level.bottom); //go back down
             break;
         }
       break;     
