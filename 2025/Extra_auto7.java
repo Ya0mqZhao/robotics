@@ -800,8 +800,62 @@ public class Robot extends TimedRobot {
             else{
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
               elevator.setLevel(Level.bottom); //go back down
+              autoStage=8;
                 }
             break;
+          case 8://logic: move to a certain spot
+            swerve.driveTo(5, 5, 150); //move robot to reef (Improved)
+            if(swerve.atDriveGoal()){
+              autoStage = 9; //Advance to the next stage if location correct
+            }
+          break;
+          case 9://logic: check angle position
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            double currentX = swerve.getXPos();//both define current position👇
+            double currentY = swerve.getYPos();
+            swerve.driveTo(currentX, currentY, 150.0); //double check to make sure
+            if(swerve.atDriveGoal()){
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+              autoStage = 10;//go to next stage if correct
+            }
+            break;
+          case 10: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.highAlgae); //rise, to high algae
+            if (!algaeYeeter.algaeDetected()){
+              autoStage = 11; //to the next stage
+            }
+            break;
+          case 11: //logic: lower back down to L1 or where algae dont touch bumper but sprint-able
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.L1); //back down to L1
+            if (elevator.atSetpoint()){ //check its back down
+              autoStage=12; //go to stage 6
+            }
+            break;
+          case 12: //logic: take algae to barge
+            swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
+            if(swerve.atDriveGoal()){
+              autoStage = 13; //Advance to the next stage if location correct
+                  }
+              break;
+          case 13: //logic: rise elevator, toss
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
+            if (elevator.atSetpoint()){ //check its up
+              algaeYeeter.yeet(); //toss
+              autoStage=14; //go to stage 8
+                }
+            break;
+          case 14: //logic: close algae mode, lower back down
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if (!algaeYeeter.algaeDetected()){//check condition to continue toss
+              algaeYeeter.yeet();} //toss
+            else{
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
+              elevator.setLevel(Level.bottom); //go back down
+                }
+            break
         }
       break;     
       
