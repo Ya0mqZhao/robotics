@@ -802,6 +802,7 @@ public class Robot extends TimedRobot {
               elevator.setLevel(Level.bottom); //go back down
                 }
             break;
+            case 8: //logic: new algae
         }
       break;     
       
