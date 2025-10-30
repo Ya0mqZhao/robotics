@@ -750,7 +750,7 @@ public class Robot extends TimedRobot {
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
           case 1://logic: move to a certain spot
-            swerve.driveTo(6, 4, 90); //move robot to reef (Improved)
+            swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
               autoStage = 2; //Advance to the next stage if location correct
             }
