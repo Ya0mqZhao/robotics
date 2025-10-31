@@ -770,6 +770,7 @@ public class Robot extends TimedRobot {
            if (elevator.atSetpoint()){ //check its back down
              autoStage = 4;
            }
+            break;
           case 4: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
