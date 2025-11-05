@@ -162,8 +162,8 @@ public class Robot extends TimedRobot {
 
       case auto7:
         // AutoInit 7 code goes here.
-        swerve.resetDriveController(scoringHeadings[21]);//prepare robot
         swerve.pushCalibration(true, 90.0); // Updates the robot's position on the field.
+        swerve.resetDriveController(90);//prepare robot
       break;
 
       case auto8:
@@ -750,7 +750,7 @@ public class Robot extends TimedRobot {
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
           case 1://logic: move to a certain spot
-            swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
+            swerve.driveTo(5.95, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
               autoStage = 2; //Advance to the next stage if location correct
             }
@@ -761,6 +761,7 @@ public class Robot extends TimedRobot {
             double currentY = swerve.getYPos();
             swerve.driveTo(currentX, currentY, 90.0); //double check to make sure
             if(swerve.atDriveGoal()){
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
               autoStage = 3;//go to next stage if correct
             }
             break;
@@ -774,8 +775,7 @@ public class Robot extends TimedRobot {
             break;
           case 4: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
-            if (coralTimer.get() > 4.0){
+            if (coralTimer.get() > 3.0){
               autoStage = 5; //to the next stage
             }
             break;
