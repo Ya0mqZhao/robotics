@@ -761,7 +761,6 @@ public class Robot extends TimedRobot {
             double currentY = swerve.getYPos();
             swerve.driveTo(currentX, currentY, 90.0); //double check to make sure
             if(swerve.atDriveGoal()){
-              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
               autoStage = 3;//go to next stage if correct
             }
             break;
@@ -769,6 +768,7 @@ public class Robot extends TimedRobot {
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             elevator.setLevel(Level.highAlgae); //rise, to high algae
            if (elevator.atSetpoint()){ //check its back down
+             algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
              coralTimer.reset();
              autoStage = 4;
            }
@@ -794,8 +794,8 @@ public class Robot extends TimedRobot {
               break;
           case 7: //logic: rise elevator, toss
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if(swerve.atDriveGoal()){
             elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
-            if (elevator.atSetpoint()){ //check its up
               autoStage=8; //go to stage 8
                 }
             break;
