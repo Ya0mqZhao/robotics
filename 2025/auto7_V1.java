@@ -750,7 +750,7 @@ public class Robot extends TimedRobot {
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
           case 1://logic: move to a certain spot
-            swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
+            swerve.driveTo(5.95, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
               autoStage = 2; //Advance to the next stage if location correct
             }
@@ -793,10 +793,10 @@ public class Robot extends TimedRobot {
               break;
           case 7: //logic: rise elevator, toss
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if(swerve.atDriveGoal()){
             elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
-            if (elevator.atSetpoint()){ //check its up
-              autoStage=8; //go to stage 8
-                }
+            autoStage=8; //go to stage 8
+            }
             break;
           case 8: //break down of case7
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
