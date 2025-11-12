@@ -749,65 +749,41 @@ public class Robot extends TimedRobot {
 
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
-          case 1://logic: move to a certain spot
+          case 1://logic: move reef ID10, if arrived, set elevator level to high algae
             swerve.driveTo(5.95, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
+            elevator.setLevel(Level.highAlgae); //rise, to high algae
+
               autoStage = 2; //Advance to the next stage if location correct
             }
           break;
-          case 2://logic: check angle position
+          case 2://logic: check position angle and get algae arms out and reset timmer for stage 3
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            double currentX = swerve.getXPos();//both define current position👇
-            double currentY = swerve.getYPos();
-            swerve.driveTo(currentX, currentY, 90.0); //double check to make sure
-            if(swerve.atDriveGoal()){
+            swerve.driveTo(swerve.getXPos(), swerve.getYPos(), 90.0);//double check to make sure
+            if(swerve.atDriveGoal() && elevator.atSetpoint()){//double condition, should be fine
+             algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+             coralTimer.reset();//prepare for stage 3
               autoStage = 3;//go to next stage if correct
             }
             break;
-          case 3:
+          case 3: //logic: stop, lower back down after 2 second
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            elevator.setLevel(Level.highAlgae); //rise, to high algae
-           if (elevator.atSetpoint()){ //check its back down
-             algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
-             coralTimer.reset();
-             autoStage = 4;
-           }
-            break;
-          case 4: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if (coralTimer.get() > 3.0){
-              autoStage = 5; //to the next stage
+            if (coralTimer.get() > 2){ //prediction
+              elevator.setLevel(Level.L1);//lower back down
+              autoStage = 4; //to the next stage
             }
             break;
-          case 5: //logic: lower back down to L1 or where algae dont touch bumper but sprint-able
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            elevator.setLevel(Level.L1); //back down to L1
-            if (elevator.atSetpoint()){ //check its back down
-              autoStage=6; //go to stage 6
-            }
-            break;
-          case 6: //logic: take algae to barge
+          case 4: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
             if(swerve.atDriveGoal()){
-              autoStage = 7; //Advance to the next stage if location correct
+              elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
+              algaeYeeter.yeet();//toss
+              autoStage = 5; //Advance to the next stage if location correct
                   }
               break;
-          case 7: //logic: rise elevator, toss
+          case 5: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(swerve.atDriveGoal()){
-            elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
-              autoStage=8; //go to stage 8
-                }
-            break;
-          case 8: //break down of case7
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            algaeYeeter.yeet();
-            autoStage =9;
-          case 9: //logic: close algae mode, lower back down
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if (!algaeYeeter.algaeDetected()){//check condition to continue toss
-              algaeYeeter.yeet();} //toss
-            else{
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
               elevator.setLevel(Level.bottom); //go back down
                 }
