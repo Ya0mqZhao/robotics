@@ -790,6 +790,7 @@ public class Robot extends TimedRobot {
             break;
         }
       break;     
+        //                   ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ    <---  El manqi can't go without an emoji
 
       case auto8:
         switch (autoStage) {
