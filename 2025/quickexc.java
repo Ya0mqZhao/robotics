@@ -751,9 +751,9 @@ public class Robot extends TimedRobot {
         switch (autoStage) { 
           case 1://logic: move reef ID10, if arrived, set elevator level to high algae
             speedScaleFactor = 0.90;//if it works it works
-            swerve.driveTo(5.95, 4.0, 90.0); //move robot to reef (Improved)
+            swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
-            elevator.setLevel(Level.highAlgae); //rise, to high algae
+            elevator.setLevel(Level.L3); //rise, to high algae
             speedScaleFactor = 0.65;
               autoStage = 2; //Advance to the next stage if location correct
             }
