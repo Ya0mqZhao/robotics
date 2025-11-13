@@ -750,10 +750,11 @@ public class Robot extends TimedRobot {
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
         switch (autoStage) { 
           case 1://logic: move reef ID10, if arrived, set elevator level to high algae
+            speedScaleFactor = 0.90;//if it works it works
             swerve.driveTo(5.95, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
             elevator.setLevel(Level.highAlgae); //rise, to high algae
-
+            speedScaleFactor = 0.65;
               autoStage = 2; //Advance to the next stage if location correct
             }
           break;
@@ -770,11 +771,15 @@ public class Robot extends TimedRobot {
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if (coralTimer.get() > 2){ //prediction
               elevator.setLevel(Level.L1);//lower back down
+              speedScaleFactor = 0.45;//"slow it down" -brendan
               autoStage = 4; //to the next stage
             }
             break;
           case 4: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
+            if (elevator.atSetpoint()){
+              speedScaleFactor = 0.90;//catch up the wasted time
+            }
             if(swerve.atDriveGoal()){
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
               algaeYeeter.yeet();//toss
@@ -786,6 +791,7 @@ public class Robot extends TimedRobot {
             if(swerve.atDriveGoal()){
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
               elevator.setLevel(Level.bottom); //go back down
+              speedScaleFactor = 0.65; //quto complete, back to default
                 }
             break;
         }
