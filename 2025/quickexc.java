@@ -753,7 +753,7 @@ public class Robot extends TimedRobot {
             speedScaleFactor = 0.90;//if it works it works
             swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
             if(swerve.atDriveGoal()){
-            elevator.setLevel(Level.L3); //rise, to high algae
+            elevator.setLevel(Level.highAlgae); //rise, to high algae
             speedScaleFactor = 0.65;
               autoStage = 2; //Advance to the next stage if location correct
             }
@@ -782,7 +782,9 @@ public class Robot extends TimedRobot {
             }
             if(swerve.atDriveGoal()){
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
+            if(elevator.atSetpoint()){
               algaeYeeter.yeet();//toss
+                  }
               autoStage = 5; //Advance to the next stage if location correct
                   }
               break;
