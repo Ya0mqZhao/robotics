@@ -782,13 +782,17 @@ public class Robot extends TimedRobot {
             }
             if(swerve.atDriveGoal()){
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
-            if(elevator.atSetpoint()){
-              algaeYeeter.yeet();//toss
-                  }
               autoStage = 5; //Advance to the next stage if location correct
                   }
               break;
-          case 5: //logic: close algae mode, lower back down
+          case 5://algae.yeet
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if (elevator.atSetpoint()){
+              algaeYeeter.yeet();//toss
+              autoStage = 6
+                }
+            break;
+          case 6: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(swerve.atDriveGoal()){
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
