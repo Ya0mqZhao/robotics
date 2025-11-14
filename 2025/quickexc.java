@@ -798,6 +798,7 @@ public class Robot extends TimedRobot {
               algaeYeeter.yeet(); //yeet algae
               autoStage = 7;
                 }
+            break;
           case 7: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(swerve.atDriveGoal()){
