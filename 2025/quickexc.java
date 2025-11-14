@@ -788,11 +788,17 @@ public class Robot extends TimedRobot {
           case 5://algae.yeet
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if (elevator.atSetpoint()){
-              algaeYeeter.yeet();//toss
-              autoStage = 6
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); //algae down
+              autoStage = 6;
                 }
             break;
-          case 6: //logic: close algae mode, lower back down
+          case 6:
+          swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){
+              algaeYeeter.yeet(); //yeet algae
+              autoStage = 7;
+                }
+          case 7: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(swerve.atDriveGoal()){
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
