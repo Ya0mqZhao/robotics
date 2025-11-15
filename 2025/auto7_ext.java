@@ -784,9 +784,7 @@ public class Robot extends TimedRobot {
             break;
           case 5: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
-            if (elevator.atSetpoint()){
-            }
-            if(swerve.atDriveGoal()){
+            if (elevator.atSetpoint()&&swerve.atDriveGoal()){
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); 
               autoStage = 6; //Advance to the next stage if location correct
