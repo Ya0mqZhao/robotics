@@ -765,6 +765,7 @@ public class Robot extends TimedRobot {
             break;
           case 3:
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            speedScaleFactor = 0.45;
             if (!coralSpitter.isSpitting()&& elevator.atSetpoint()) {
               swerve.driveTo(5.92, 4.0, 90.0); //for algae
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
@@ -775,6 +776,7 @@ public class Robot extends TimedRobot {
             break;
           case 4: //logic: stop, lower back down after 2 second
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            speedScaleFactor = 0.90; // Slow precision
             if (coralTimer.get() > 1.5){ //prediction
               elevator.setLevel(Level.L1);//lower back down
               autoStage = 5; //to the next stage
@@ -782,7 +784,9 @@ public class Robot extends TimedRobot {
             break;
           case 5: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
-            if (elevator.atSetpoint()&&swerve.atDriveGoal()){
+            if (elevator.atSetpoint()){
+            }
+            if(swerve.atDriveGoal()){
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); 
               autoStage = 6; //Advance to the next stage if location correct
@@ -804,7 +808,7 @@ public class Robot extends TimedRobot {
             break;
         }
       break;     
-        //                   ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ    <---  El manqi can't go without an emoji
+        //    ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ
 
       case auto8:
         switch (autoStage) {
