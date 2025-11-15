@@ -768,6 +768,7 @@ public class Robot extends TimedRobot {
             if (!coralSpitter.isSpitting()&& elevator.atSetpoint()) {
               swerve.driveTo(5.92, 4.0, 90.0); //for algae
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+              elevator.setLevel(Level.highAlgae); //rise, to high algae
               coralTimer.reset();//prepare for stage 3
               autoStage = 4; // Advances to the next stage once the coral is ejected.
             }
