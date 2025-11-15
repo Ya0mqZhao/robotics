@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
   private static final String auto4 = "3-Piece Coral L2/L4/L4 (Index 2, 1, 7) Right Side (90 Start Heading)";
   private static final String auto5 = "3-Piece Coral L4/L4/L4 (Index 4, 5, 11) Left Side (180 Start Heading)";
   private static final String auto6 = "3-Piece Coral L4/L4/L4 (Index 2, 1, 7) Right Side (90 Start Heading)"; 
-  private static final String auto7 = "algae1";
+  private static final String auto7 = "Algae ID 10";
   private static final String auto8 = "WIP2"; 
   private static final String auto9 = "WIP3"; 
   private static final String auto10 = "WIP4";
