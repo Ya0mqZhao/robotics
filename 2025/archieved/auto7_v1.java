@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
   private static final String auto4 = "3-Piece Coral L2/L4/L4 (Index 2, 1, 7) Right Side (90 Start Heading)";
   private static final String auto5 = "3-Piece Coral L4/L4/L4 (Index 4, 5, 11) Left Side (180 Start Heading)";
   private static final String auto6 = "3-Piece Coral L4/L4/L4 (Index 2, 1, 7) Right Side (90 Start Heading)"; 
-  private static final String auto7 = "algae1";
+  private static final String auto7 = "algae ID10 + index 9 coral L4";
   private static final String auto8 = "WIP2"; 
   private static final String auto9 = "WIP3"; 
   private static final String auto10 = "WIP4";
@@ -162,8 +162,8 @@ public class Robot extends TimedRobot {
 
       case auto7:
         // AutoInit 7 code goes here.
-        swerve.resetDriveController(scoringHeadings[21]);//prepare robot
         swerve.pushCalibration(true, 90.0); // Updates the robot's position on the field.
+        swerve.resetDriveController(scoringHeadings[9]);//prepare robot
       break;
 
       case auto8:
@@ -747,72 +747,66 @@ public class Robot extends TimedRobot {
         }
       break;
 
-      case auto7: //auto algae base on angle this looks like right algaes not sure doe
+      case auto7: //auto algae along with pre-loaded coral
         switch (autoStage) { 
-          case 1://logic: move to a certain spot
-            swerve.driveTo(5.95, 4.0, 90.0); //move robot to reef (Improved)
+          case 1://logic: move reef ID10, if arrived, set elevator level to high algae
+            swerve.driveTo(scoringPositionsX[9],scoringPositionsY[9],scoringHeadings[9]); // This moves the robot to the reef.
             if(swerve.atDriveGoal()){
+            elevator.setLevel(Level.L4); //rise, to high algae
               autoStage = 2; //Advance to the next stage if location correct
             }
           break;
-          case 2://logic: check angle position
+          case 2:
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            double currentX = swerve.getXPos();//both define current position👇
-            double currentY = swerve.getYPos();
-            swerve.driveTo(currentX, currentY, 90.0); //double check to make sure
-            if(swerve.atDriveGoal()){
-              autoStage = 3;//go to next stage if correct
+            if(elevator.atSetpoint()){
+              coralSpitter.spit(); // Spits the coral.
+                autoStage = 3;
             }
             break;
           case 3:
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            elevator.setLevel(Level.highAlgae); //rise, to high algae
-           if (elevator.atSetpoint()){ //check its back down
-             autoStage = 4;
-           }
+            speedScaleFactor = 0.45;
+            if (!coralSpitter.isSpitting()&& elevator.atSetpoint()) {
+              swerve.driveTo(5.92, 4.0, 90.0); //for algae
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+              elevator.setLevel(Level.highAlgae); //rise, to high algae
+              coralTimer.reset();//prepare for stage 3
+              autoStage = 4; // Advances to the next stage once the coral is ejected.
+            }
             break;
-          case 4: //logic: stop, rise to L3, and take out algae grabber(safety concerns TBD)
+          case 4: //logic: stop, lower back down after 2 second
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
-            if (!algaeYeeter.algaeDetected()){
+            speedScaleFactor = 0.90; // Slow precision
+            if (coralTimer.get() > 1.5||!algaeYeeter.algaeDetected()){ //prediction
+              elevator.setLevel(Level.L1);//lower back down
               autoStage = 5; //to the next stage
             }
             break;
-          case 5: //logic: lower back down to L1 or where algae dont touch bumper but sprint-able
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            elevator.setLevel(Level.L1); //back down to L1
-            if (elevator.atSetpoint()){ //check its back down
-              autoStage=6; //go to stage 6
-            }
-            break;
-          case 6: //logic: take algae to barge
+          case 5: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
-            if(swerve.atDriveGoal()){
-              autoStage = 7; //Advance to the next stage if location correct
+            if (elevator.atSetpoint()&&swerve.atDriveGoal()){
+              elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); 
+              autoStage = 6; //Advance to the next stage if location correct
                   }
               break;
-          case 7: //logic: rise elevator, toss
+          case 6:
+          swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){
+              algaeYeeter.yeet(); //yeet algae
+              autoStage = 7;
+                }
+            break;
+          case 7: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(swerve.atDriveGoal()){
-            elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
-            autoStage=8; //go to stage 8
-            }
-            break;
-          case 8: //break down of case7
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            algaeYeeter.yeet();
-            autoStage =9;
-          case 9: //logic: close algae mode, lower back down
-            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if (!algaeYeeter.algaeDetected()){//check condition to continue toss
-              algaeYeeter.yeet();} //toss
-            else{
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
               elevator.setLevel(Level.bottom); //go back down
                 }
             break;
         }
       break;     
+        //    ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ
 
       case auto8:
         switch (autoStage) {
