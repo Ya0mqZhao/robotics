@@ -163,7 +163,7 @@ public class Robot extends TimedRobot {
       case auto7:
         // AutoInit 7 code goes here.
         swerve.pushCalibration(true, 90.0); // Updates the robot's position on the field.
-        swerve.resetDriveController(90);//prepare robot
+        swerve.resetDriveController(scoringHeadings[9]);//prepare robot
       break;
 
       case auto8:
@@ -747,49 +747,56 @@ public class Robot extends TimedRobot {
         }
       break;
 
-      case auto7: //auto algae base on angle this looks like right algaes not sure doe
+      case auto7: //auto algae along with pre-loaded coral
         switch (autoStage) { 
           case 1://logic: move reef ID10, if arrived, set elevator level to high algae
-            swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
+            swerve.driveTo(scoringPositionsX[9],scoringPositionsY[9],scoringHeadings[9]); // This moves the robot to the reef.
             if(swerve.atDriveGoal()){
-            elevator.setLevel(Level.highAlgae); //rise, to high algae
+            elevator.setLevel(Level.L4); //rise, to high algae
               autoStage = 2; //Advance to the next stage if location correct
             }
           break;
-          case 2://logic: check position angle and get algae arms out and reset timmer for stage 3
+          case 2:
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            swerve.driveTo(swerve.getXPos(), swerve.getYPos(), 90.0);//double check to make sure
-            if(swerve.atDriveGoal() && elevator.atSetpoint()){//double condition, should be fine
-             algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
-             coralTimer.reset();//prepare for stage 3
-              autoStage = 3;//go to next stage if correct
+            if(elevator.atSetpoint()){
+              coralSpitter.spit(); // Spits the coral.
+                autoStage = 3;
             }
             break;
-          case 3: //logic: stop, lower back down after 2 second
+          case 3:
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if (coralTimer.get() > 2){ //prediction
+            if (!coralSpitter.isSpitting()&& elevator.atSetpoint()) {
+              swerve.driveTo(5.92, 4.0, 90.0); //for algae
+              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
+              coralTimer.reset();//prepare for stage 3
+              autoStage = 4; // Advances to the next stage once the coral is ejected.
+            }
+            break;
+          case 4: //logic: stop, lower back down after 2 second
+            swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
+            if (coralTimer.get() > 1.5){ //prediction
               elevator.setLevel(Level.L1);//lower back down
-              autoStage = 4; //to the next stage
+              autoStage = 5; //to the next stage
             }
             break;
-          case 4: //logic: take algae to barge
+          case 5: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
             if (elevator.atSetpoint()){
             }
             if(swerve.atDriveGoal()){
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); 
-              autoStage = 5; //Advance to the next stage if location correct
+              autoStage = 6; //Advance to the next stage if location correct
                   }
               break;
-          case 5:
+          case 6:
           swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){
               algaeYeeter.yeet(); //yeet algae
-              autoStage = 6;
+              autoStage = 7;
                 }
             break;
-          case 6: //logic: close algae mode, lower back down
+          case 7: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if(swerve.atDriveGoal()){
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
