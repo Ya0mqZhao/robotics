@@ -751,61 +751,60 @@ public class Robot extends TimedRobot {
         switch (autoStage) { 
           case 1://logic: move reef ID10, if arrived, set elevator level to high algae
             swerve.driveTo(scoringPositionsX[9],scoringPositionsY[9],scoringHeadings[9]); // This moves the robot to the reef.
-            if(swerve.atDriveGoal()){
+            if(swerve.atDriveGoal()){//if the robot has drive to the certain point
             elevator.setLevel(Level.L4); //rise, to high algae
               autoStage = 2; //Advance to the next stage if location correct
             }
-          break;
-          case 2:
+          break;//all case needs a "break;" so two stages dont function at the same time
+          case 2:// logic: if elevator at L4, spit coral
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if(elevator.atSetpoint()){
+            if(elevator.atSetpoint()){ //if elevator is at L4
               coralSpitter.spit(); // Spits the coral.
                 autoStage = 3;
             }
-            break;
-          case 3:
+          break;//all case needs a "break;" so two stages dont function at the same time
+          case 3://logic: slow down when scooting back to the algae position, arm out along with elevator adjust
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            speedScaleFactor = 0.45;
-            if (!coralSpitter.isSpitting()&& elevator.atSetpoint()) {
+            speedScaleFactor = 0.45;//slow the robot down to 45%
+            if (!coralSpitter.isSpitting()) {//if the coral has spitted out
               swerve.driveTo(5.92, 4.0, 90.0); //for algae
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
               elevator.setLevel(Level.highAlgae); //rise, to high algae
               coralTimer.reset();//prepare for stage 3
               autoStage = 4; // Advances to the next stage once the coral is ejected.
             }
-            break;
-          case 4: //logic: stop, lower back down after 2 second
+          break;//all case needs a "break;" so two stages dont function at the same time
+          case 4: //logic: stop, lower back down after 1.5 sec OR algae detected
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             speedScaleFactor = 0.90; // Slow precision
-            if (coralTimer.get() > 1.5){ //prediction
+            if (coralTimer.get() > 1.5||!algaeYeeter.algaeDetected()){ //if the robot has waited 1.5 second or algae detected
               elevator.setLevel(Level.L1);//lower back down
               autoStage = 5; //to the next stage
             }
-            break;
-          case 5: //logic: take algae to barge
+          break;//all case needs a "break;" so two stages dont function at the same time
+          case 5: //logic: take algae to barge, rise elevator and set arm at barge position
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
-            if (elevator.atSetpoint()&&swerve.atDriveGoal()){
+            if (swerve.atDriveGoal()){//if droved to barge
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); 
               autoStage = 6; //Advance to the next stage if location correct
                   }
-              break;
-          case 6:
+          break;//all case needs a "break;" so two stages dont function at the same time
+          case 6://logic: algae yeet after condition met
           swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){
+            if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){//if algae arm at barge position and elevator at L4
               algaeYeeter.yeet(); //yeet algae
-              autoStage = 7;
+              autoStage = 7;//to the next stage
                 }
-            break;
+          break;//all case needs a "break;" so two stages dont function at the same time
           case 7: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if(swerve.atDriveGoal()){
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
               elevator.setLevel(Level.bottom); //go back down
-                }
-            break;
+          break;//all case needs a "break;" so two stages dont function at the same time
         }
-      break;     
+      break;//final break to draw the boarder line between auto7 and auto8
+       
         //    ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ
 
       case auto8:
