@@ -776,7 +776,7 @@ public class Robot extends TimedRobot {
           break;//all case needs a "break;" so two stages dont function at the same time
           case 4: //logic: stop, lower back down after 1.5 sec OR algae detected
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            speedScaleFactor = 0.90; // Slow precision
+            speedScaleFactor = 0.90; // speed up
             if (coralTimer.get() > 1.5||!algaeYeeter.algaeDetected()){ //if the robot has waited 1.5 second or algae detected
               elevator.setLevel(Level.L1);//lower back down
               autoStage = 5; //to the next stage
