@@ -1231,4 +1231,4 @@ public class Robot extends TimedRobot {
     calcScoringPoses();
     calcNearestScoringPose();
   }
-}
+} 
