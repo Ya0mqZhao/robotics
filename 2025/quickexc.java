@@ -748,16 +748,16 @@ public class Robot extends TimedRobot {
       break;
 
       case auto7: //auto algae base on angle this looks like right algaes not sure doe
-        switch (autoStage) { 
+        switch (autoStage) { //auto stage
           case 1://logic: move reef ID10, if arrived, set elevator level to high algae
             speedScaleFactor = 0.90;//if it works it works
             swerve.driveTo(6.0, 4.0, 90.0); //move robot to reef (Improved)
-            if(swerve.atDriveGoal()){
+            if(swerve.atDriveGoal()){//drive to certain position
             elevator.setLevel(Level.highAlgae); //rise, to high algae
-            speedScaleFactor = 0.65;
+            speedScaleFactor = 0.65;//back to regular speed
               autoStage = 2; //Advance to the next stage if location correct
-            }
-          break;
+            }//bracket
+          break;//all code need "break" so it wont crash in
           case 2://logic: check position angle and get algae arms out and reset timmer for stage 3
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             swerve.driveTo(swerve.getXPos(), swerve.getYPos(), 90.0);//double check to make sure
@@ -765,44 +765,44 @@ public class Robot extends TimedRobot {
              algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.algae); //algae down
              coralTimer.reset();//prepare for stage 3
               autoStage = 3;//go to next stage if correct
-            }
-            break;
+            }//bracket
+          break;//all code need "break" so it wont crash in
           case 3: //logic: stop, lower back down after 2 second
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
             if (coralTimer.get() > 2){ //prediction
               elevator.setLevel(Level.L1);//lower back down
               speedScaleFactor = 0.45;//"slow it down" -brendan
               autoStage = 4; //to the next stage
-            }
-            break;
+            }//bracket
+          break;//all code need "break" so it wont crash in
           case 4: //logic: take algae to barge
             swerve.driveTo(scoringPositionsX[29],scoringPositionsY[29], scoringHeadings[29]);//move to scoring point - barge
-            if (elevator.atSetpoint()){
+            if (elevator.atSetpoint()){//if elevator lowered down before reaching scoring point.
               speedScaleFactor = 0.90;//catch up the wasted time
-            }
-            if(swerve.atDriveGoal()){
+            }//breacket
+            if(swerve.atDriveGoal()){//if at drive goal
               elevator.setLevel(Level.L4); //rise, pretty sure the highest is fine
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.barge); //algae down
               autoStage = 5; //Advance to the next stage if location correct
-                  }
-              break;
-          case 5:
+                  }//breacket
+          break;//all code need "break" so it wont crash in
+          case 5://logic: check both condition before yeet
           swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){
+            if(algaeYeeter.armAtSetpoint()&&elevator.atSetpoint()){ //double condition, both if arms at set point and elevator at set point
               algaeYeeter.yeet(); //yeet algae
               autoStage = 6;
-                }
-            break;
+                }//bracket
+          break;//all code need "break" so it wont crash in
           case 6: //logic: close algae mode, lower back down
             swerve.drive (0.0,0.0,0.0, false, 0.0,0.0); //stop
-            if(swerve.atDriveGoal()){
+            if(swerve.atDriveGoal()){//drive to a certain point
               algaeYeeter.setArmPosition(AlgaeYeeter.ArmPosition.stow); //algae up
               elevator.setLevel(Level.bottom); //go back down
               speedScaleFactor = 0.65; //quto complete, back to default
-                }
-            break;
+                }//bracket
+          break;//all code need "break" so it wont crash in
         }
-      break;     
+      break;  //one last break, all code needs "break" so no code will be run together   
         //                   ٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ
 
       case auto8:
