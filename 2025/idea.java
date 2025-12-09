@@ -930,9 +930,8 @@ public class Robot extends TimedRobot {
 if (swerveLock) {
     swerve.xLock(); // Locks the swerve modules (for defense).
 } else if (driver.getRawButton(6)) { // Right bumper button 
-    // Check if robot is in the auto-drive zone
-    if (swerve.getXPos() >= 4.5 && swerve.getXPos() <= 7 && swerve.getYPos() >= 6 && swerve.getYPos() <= 7) {
-        SmartDashboard.putString("Auto Drive", "In Zone: Press A/B/X");
+    if (swerve.getXPos() >= 4.5 && swerve.getXPos() <= 7 && swerve.getYPos() >= 6 && swerve.getYPos() <= 7) {//ID9
+        SmartDashboard.putString("Auto Drive", "In Zone: Press A-Left/B-Right/X-Algae");
         if (driver.getRawButton(1)) { // A button
             swerve.driveTo(scoringPositionsX[10], scoringPositionsY[10], scoringHeadings[10]);
         } else if (driver.getRawButton(2)) { // B button
@@ -944,7 +943,7 @@ if (swerveLock) {
         }
     }
 } 
-    if (swerve.getXPos() >= 3 && swerve.getXPos() <= 4 && swerve.getYPos() >= 5.5 && swerve.getYPos() <= 6.5) {
+    if (swerve.getXPos() >= 3 && swerve.getXPos() <= 4 && swerve.getYPos() >= 5.5 && swerve.getYPos() <= 6.5) {//ID8
         SmartDashboard.putString("Auto Drive", "In Zone: Press A-Left/B-Right/X-Algae");
       if (driver.getRawButton(1)) { // A button
       swerve.driveTo(scoringPositionsX[5], scoringPositionsY[5], scoringHeadings[5]);
@@ -953,7 +952,8 @@ if (swerveLock) {
 }       else if (driver.getRawButton(3)) { // X button
     swerve.driveTo(scoringPositionsX[23], scoringPositionsY[23], scoringHeadings[23]);
 }
-        } else {
+        }
+    else {
             swerve.drive(0.0, 0.0, 0.0, true, 0.0, 0.0);
         }
     }
