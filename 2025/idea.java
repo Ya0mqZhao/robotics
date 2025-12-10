@@ -927,40 +927,44 @@ public class Robot extends TimedRobot {
       swerveLock = false; // Pressing any joystick more than 5% will cause the swerve modules stop locking and begin driving.
     }
 
-if (swerveLock) {
-    swerve.xLock(); // Locks the swerve modules (for defense).
-} else if (driver.getRawButton(6)) { // Right bumper button 
-    if (swerve.getXPos() >= 4.5 && swerve.getXPos() <= 7 && swerve.getYPos() >= 6 && swerve.getYPos() <= 7) {//ID9
-        SmartDashboard.putString("Auto Drive", "In Zone: Press A-Left/B-Right/X-Algae");
-        if (driver.getRawButton(1)) { // A button
-            swerve.driveTo(scoringPositionsX[10], scoringPositionsY[10], scoringHeadings[10]);
-        } else if (driver.getRawButton(2)) { // B button
-            swerve.driveTo(scoringPositionsX[4], scoringPositionsY[4], scoringHeadings[4]);
-        } else if (driver.getRawButton(3)) { // X button
-            swerve.driveTo(scoringPositionsX[22], scoringPositionsY[22], scoringHeadings[22]);
-        } else {
-            swerve.drive(0.0, 0.0, 0.0, true, 0.0, 0.0);
-        }
-    }
-} 
-    if (swerve.getXPos() >= 3 && swerve.getXPos() <= 4 && swerve.getYPos() >= 5.5 && swerve.getYPos() <= 6.5) {//ID8
-        SmartDashboard.putString("Auto Drive", "In Zone: Press A-Left/B-Right/X-Algae");
-      if (driver.getRawButton(1)) { // A button
-      swerve.driveTo(scoringPositionsX[5], scoringPositionsY[5], scoringHeadings[5]);
-  }     else if (driver.getRawButton(2)) { // B button
-    swerve.driveTo(scoringPositionsX[4], scoringPositionsY[4], scoringHeadings[4]);
-}       else if (driver.getRawButton(3)) { // X button
-    swerve.driveTo(scoringPositionsX[23], scoringPositionsY[23], scoringHeadings[23]);
-}
-        }
-    else {
-            swerve.drive(0.0, 0.0, 0.0, true, 0.0, 0.0);
-        }
-    }
-}
-else {
-    swerve.drive(xVel, yVel, angVel, true, 0.0, 0.0); 
-}
+    if (swerveLock) {
+      swerve.xLock();
+  } else if (driver.getRawButton(6)) { 
+      if (swerve.getXPos() >= 4.5 && swerve.getXPos() <= 7 &&
+          swerve.getYPos() >= 6   && swerve.getYPos() <= 7) {
+          SmartDashboard.putString("Auto Drive", "In Zone: Press A-Left/B-Right/X-Algae");
+          if (driver.getRawButton(1)) {// A
+              swerve.driveTo(scoringPositionsX[10], scoringPositionsY[10], scoringHeadings[10]);
+          } else if (driver.getRawButton(2)) {// B
+              swerve.driveTo(scoringPositionsX[4], scoringPositionsY[4], scoringHeadings[4]);
+          } else if (driver.getRawButton(3)) {// X
+              swerve.driveTo(scoringPositionsX[22], scoringPositionsY[22], scoringHeadings[22]);
+          } else {
+              swerve.drive(0.0, 0.0, 0.0, true, 0.0, 0.0);
+          }
+  
+      }
+      else if (swerve.getXPos() >= 3   && swerve.getXPos() <= 4 &&
+               swerve.getYPos() >= 5.5 && swerve.getYPos() <= 6.5) {
+            SmartDashboard.putString("Auto Drive", "In Zone: Press A-Left/B-Right/X-Algae");
+          if (driver.getRawButton(1)) {// A
+              swerve.driveTo(scoringPositionsX[5], scoringPositionsY[5], scoringHeadings[5]);
+          } else if (driver.getRawButton(2)) {// B
+              swerve.driveTo(scoringPositionsX[4], scoringPositionsY[4], scoringHeadings[4]);
+          } else if (driver.getRawButton(3)) {// X
+              swerve.driveTo(scoringPositionsX[23], scoringPositionsY[23], scoringHeadings[23]);
+          } else { 
+              swerve.drive(0.0, 0.0, 0.0, true, 0.0, 0.0);
+          }
+      }
+      else { 
+          swerve.drive(0.0, 0.0, 0.0, true, 0.0, 0.0);
+      }
+  } else {
+      swerve.drive(xVel, yVel, angVel, true, 0.0, 0.0);
+  
+  }
+  
     // The following 3 calls allow the user to calibrate the position of the robot based on April Tag information. Should be called when the robot is stationary. Button 7 is "View", the right center button.
     if (driver.getRawButtonPressed(7)) {
       swerve.calcPriorityLimelightIndex();
