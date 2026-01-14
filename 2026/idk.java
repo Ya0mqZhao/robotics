@@ -147,6 +147,49 @@ public class Robot extends TimedRobot {
         }
     }
 
+    if (driver.getRawButton(5)) { 
+        final double HX = 182.0;
+        final double HY = 158.0;
+        final double D  = 140.0; 
+        final double NX = 0.0;
+        final double NY = 1.0;
+        double x = swerve.getXPos();
+        double y = swerve.getYPos();
+        double dx = x - HX;
+        double dy = y - HY;
+        double r  = Math.hypot(dx, dy);
+        if (r == 0.0) {
+          dx = NX;
+          dy = NY;
+          r = 1.0;
+        }
+        double xc = HX + D * dx / r;
+        double yc = HY + D * dy / r;
+        double dot = (xc - HX) * NX + (yc - HY) * NY;
+        double xt, yt;
+        if (dot >= 0.0) {
+          xt = xc;
+          yt = yc;
+        } else {
+          double phi = Math.atan2(NY, NX); 
+          double b1x = HX + D * Math.cos(phi + Math.PI / 2.0);
+          double b1y = HY + D * Math.sin(phi + Math.PI / 2.0);
+          double b2x = HX + D * Math.cos(phi - Math.PI / 2.0);
+          double b2y = HY + D * Math.sin(phi - Math.PI / 2.0);
+          double dist1 = Math.hypot(b1x - x, b1y - y);
+          double dist2 = Math.hypot(b2x - x, b2y - y);
+          if (dist1 <= dist2) {
+            xt = b1x;
+            yt = b1y;
+          } else {
+            xt = b2x;
+            yt = b2y;
+          }
+        }
+        double thetaRad = Math.atan2(HY - yt, HX - xt); 
+        double thetaDeg = Math.toDegrees(thetaRad);
+        swerve.driveTo(xt, yt, thetaDeg);
+    }
     // The following 3 calls allow the user to calibrate the position of the robot based on April Tag information. Should be called when the robot is stationary. Button 7 is "View", the right center button.
     if (driver.getRawButtonPressed(7)) {
       swerve.calcPriorityLimelightIndex();
