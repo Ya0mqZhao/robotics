@@ -130,9 +130,9 @@ public class Robot extends TimedRobot {
     double yVel = yAccLimiter.calculate(MathUtil.applyDeadband(-driver.getLeftX(), 0.05)*speedScaleFactor)*Drivetrain.maxVelTeleop;
     double angVel = angAccLimiter.calculate(MathUtil.applyDeadband(-driver.getRightX(), 0.05)*rotationScaleFactor)*Drivetrain.maxAngVelTeleop;
     // Indexer control using operator controller buttons
-    if (operator.getRawButton(5)) { // Left bumper starts the indexer.
+    if (driver.getRawButton(5)) { // Left bumper starts the indexer.
       indexer.start();
-        } else if (operator.getRawButton(6)) { // Right bumper stops the indexer.
+    } else if (driver.getRawButton(6)) { // Right bumper stops the indexer.
       indexer.stop();
     }
     if (driver.getRawButton(3)) { // X button
@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
     if (driver.getRawButton(4)){//Y button
       shooter.spinUp();
     }
-    if (driver.getRightTriggerAxis()>0.1){//Eight trigger
+    if (driver.getRightTriggerAxis()>0.1){//Right trigger
       shooter.spinDown();
     }
     if (swerveLock) {
