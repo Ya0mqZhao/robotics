@@ -33,14 +33,15 @@ public class Indexer {
       IndexTimer.reset();
     }
     
-    if (currState == Mode.JAM && IndexTimer.hasElapsed(0.5)) {
+    if (currState == Mode.JAM && IndexTimer.hasElapsed(10)) {
       currState = Mode.IDLE;
+      
     }
 
     
     switch(currState) {
       case FORWARD:
-        IndexMotor.setControl(new VelocityVoltage(-20.0).withEnableFOC(true));
+        IndexMotor.setControl(new VelocityVoltage(-10.0).withEnableFOC(true));
         break;
       case JAM:
         IndexMotor.setControl(new VelocityVoltage(20.0).withEnableFOC(true));
@@ -60,7 +61,10 @@ public class Indexer {
     currState = Mode.IDLE;
     IndexMotor.setControl(new VelocityVoltage(0.0).withEnableFOC(true));
   }
-
+  public void jammed(){
+    currState = Mode.JAM;
+    IndexTimer.reset();
+  }
   public double getSensorTimer() {
     return IndexTimer.get();
   }
