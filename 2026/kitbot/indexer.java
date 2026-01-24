@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Indexer {
   public enum Mode {FORWARD, JAM, IDLE}
-  private final TalonFX IndexMotor = new TalonFX(0);
+  private final TalonFX IndexMotor = new TalonFX(0, "canivore");
   private final Timer IndexTimer = new Timer();
   private Mode currState = Mode.IDLE;
   private final AnalogPotentiometer sensor = new AnalogPotentiometer(0, 5.0);
@@ -36,16 +36,16 @@ public class Indexer {
     if (currState == Mode.JAM && IndexTimer.hasElapsed(0.5)) {
       currState = Mode.IDLE;
     }
+
     
     switch(currState) {
       case FORWARD:
-        IndexMotor.setControl(new VelocityVoltage(20.0).withEnableFOC(true));
-        break;
-      case JAM:
         IndexMotor.setControl(new VelocityVoltage(-20.0).withEnableFOC(true));
         break;
+      case JAM:
+        IndexMotor.setControl(new VelocityVoltage(20.0).withEnableFOC(true));
+        break;
       case IDLE:
-      default:
         IndexMotor.setControl(new VelocityVoltage(0.0).withEnableFOC(true));
         break;
     }
@@ -74,12 +74,8 @@ public class Indexer {
     SmartDashboard.putBoolean("Indexer Sensor", getSensor());
     SmartDashboard.putNumber("Indexer Sensor Value", sensor.get());
     SmartDashboard.putNumber("Indexer Sensor Timer", getSensorTimer());
-    SmartDashboard.putNumber("Indexer Velocity", getVelocity());
   }
     
-  private double getVelocity() {
-    return IndexMotor.getVelocity().getValue();
-  }
 
   private void configMotor() {
     TalonFXConfiguration motorConfigs = new TalonFXConfiguration();
