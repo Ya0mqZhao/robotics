@@ -19,7 +19,7 @@ public class Indexer {
   private final Timer IndexTimer = new Timer();
   private final StatusSignal<Boolean> fuelDetected;
   private Mode currState = Mode.IDLE;
-  private final AnalogPotentiometer sensor = new AnalogPotentiometer(0, 5.0);
+  private boolean isShooting = false;
   
   public Indexer() {
     configMotor();
@@ -30,21 +30,26 @@ public class Indexer {
 
   public void init() {
     currState = Mode.IDLE;
+    isShooting = false;
     IndexMotor.setControl(new VelocityVoltage(0.0).withEnableFOC(true));
     IndexTimer.reset();
   }
 
   public void periodic() {
-    if (getSensor() && IndexTimer.get() > 2) {//if sensor detects something and constantly detected for over 2 second execute mode.jam
-      currState = Mode.JAM;
-    }
-      else{
+    fuelDetected.refresh();
+    
+    if (isShooting && currState == Mode.FORWARD) {
+      if (!getSensor() && IndexTimer.get() > 5.0) {
+        currState = Mode.JAM;
+        IndexTimer.reset();
+      } else if (getSensor()) {
         IndexTimer.reset();
       }
+    }
     
-    if (currState == Mode.JAM && !getSensor()) {//codition to get out of mode.jam 
+    if (currState == Mode.JAM && IndexTimer.get() > 5.0) {
       currState = Mode.IDLE;
-      
+      isShooting = false;
     }
 
     switch(currState) {
@@ -62,34 +67,44 @@ public class Indexer {
 
   public void start() {
     currState = Mode.FORWARD;
+    isShooting = false;
     IndexTimer.reset();
   }
 
   public void stop() {
     currState = Mode.IDLE;
+    isShooting = false;
     IndexMotor.setControl(new VelocityVoltage(0.0).withEnableFOC(true));
   }
-  public void jammed(){
-    currState = Mode.JAM;
+
+  public void startShooting() {
+    currState = Mode.FORWARD;
+    isShooting = true;
     IndexTimer.reset();
   }
+  
+  public void jammed(){
+    currState = Mode.JAM;
+    isShooting = false;
+    IndexTimer.reset();
+  }
+
   public double getSensorTimer() {
-    return 0.0;
+    return IndexTimer.get();
   }
 
   public boolean getSensor() {
-    return fuelDetected.refresh().getValue();
+    return fuelDetected.getValue();
   }
 
   public void updateDash() {
     SmartDashboard.putString("Indexer State", currState.toString());
     SmartDashboard.putBoolean("Indexer Sensor", getSensor());
     SmartDashboard.putBoolean("Fuel Detected", getSensor());
+    SmartDashboard.putBoolean("Is Shooting", isShooting);
     SmartDashboard.putNumber("Indexer Sensor Timer", getSensorTimer());
-
   }
     
-
   private void configMotor() {
     TalonFXConfiguration motorConfigs = new TalonFXConfiguration();
     motorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
@@ -103,12 +118,10 @@ public class Indexer {
     motorConfigs.Slot0.kS = 0.1;
     IndexMotor.getConfigurator().apply(motorConfigs, 0.03);
   }
+  
   private void configCANrange(CANrange sensor) {
     CANrangeConfiguration sensorConfigs = new CANrangeConfiguration();
-
-    // Sets the proximity for how far away the fuel can be to get detected.
     sensorConfigs.ProximityParams.ProximityThreshold = 0.4;
-
     sensor.getConfigurator().apply(sensorConfigs, 0.03);
   }
 }
