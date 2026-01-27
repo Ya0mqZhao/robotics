@@ -147,6 +147,11 @@ public class Robot extends TimedRobot {
     if (driver.getRawButton(5)){// Left bumper
       indexer.jammed();
     }
+    if (driver.getRawButton(6)){//Right bumper(I believe)
+      indexer.start();
+      shooter.spinDown();
+    }
+    
     if (swerveLock) {
       swerve.xLock(); // Locks the swerve modules (for defense).
     } else {
