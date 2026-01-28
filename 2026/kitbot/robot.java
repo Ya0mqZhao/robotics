@@ -16,7 +16,6 @@ public class Robot extends TimedRobot {
   private final SlewRateLimiter xAccLimiter = new SlewRateLimiter(Drivetrain.maxAccTeleop / Drivetrain.maxVelTeleop);
   private final SlewRateLimiter yAccLimiter = new SlewRateLimiter(Drivetrain.maxAccTeleop / Drivetrain.maxVelTeleop);
   private final SlewRateLimiter angAccLimiter = new SlewRateLimiter(Drivetrain.maxAngAccTeleop / Drivetrain.maxAngVelTeleop);
-  private final Indexer indexer = new Indexer(); // Initializes the indexer subsystem.
 
   private double speedScaleFactor = 0.65; // Scales the translational speed of the robot that results from controller inputs. 1.0 corresponds to full speed. 0.0 is fully stopped.
   private double rotationScaleFactor = 0.3; // Scales the rotational speed of the robot that results from controller inputs. 1.0 corresponds to full speed. 0.0 is fully stopped.
@@ -26,6 +25,7 @@ public class Robot extends TimedRobot {
   // Initializes the different subsystems of the robot.
   private final Drivetrain swerve = new Drivetrain(); // Contains the Swerve Modules, Gyro, Path Follower, Target Tracking, Odometry, and Vision Calibration.
   private final Shooter shooter = new Shooter(); // Contains the Swerve Modules, Gyro, Path Follower, Target Tracking, Odometry, and Vision Calibration.
+  private final Indexer indexer = new Indexer();
   // Auto Variables
   private final SendableChooser<String> autoChooser = new SendableChooser<>();
   private static final String auto1 = "Auto 1"; 
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
     // Publishes information about the robot and robot subsystems to the Dashboard.
     swerve.updateDash();
     shooter.updateDash();
-    indexer.updateDash(); 
+    indexer.updateDash();
     updateDash();
   }
 
@@ -109,18 +109,17 @@ public class Robot extends TimedRobot {
   }
   
   public void teleopInit() {
-    
     swerve.pushCalibration(true, swerve.getFusedAng()); // Updates the robot's position on the field.
-    indexer.init(); // Initializes the indexer to a known state.
+    indexer.init();
   }
 
   public void teleopPeriodic() {
-    indexer.periodic(); // Updates the indexer state machine and motor control.
     swerve.updateOdometry(); // Keeps track of the position of the robot on the field. Must be called each period.
     swerve.updateVisionHeading(false, 0.0); // Updates the Limelights with the robot heading (for MegaTag2).
     for (int limelightIndex = 0; limelightIndex < swerve.limelights.length; limelightIndex++) { // Iterates through each limelight.
       swerve.addVisionEstimate(limelightIndex, true); // Checks to see ifs there are reliable April Tags in sight of the Limelight and updates the robot position on the field.
     }
+    indexer.periodic();
 
     if (driver.getRawButtonPressed(1)) boostMode = true; // A button sets boost mode. (100% speed up from default of 60%).
     if (driver.getRawButtonPressed(2)) boostMode = false; // B Button sets default mode (60% of full speed).
@@ -129,7 +128,6 @@ public class Robot extends TimedRobot {
     double xVel = xAccLimiter.calculate(MathUtil.applyDeadband(-driver.getLeftY(), 0.05)*speedScaleFactor)*Drivetrain.maxVelTeleop;
     double yVel = yAccLimiter.calculate(MathUtil.applyDeadband(-driver.getLeftX(), 0.05)*speedScaleFactor)*Drivetrain.maxVelTeleop;
     double angVel = angAccLimiter.calculate(MathUtil.applyDeadband(-driver.getRightX(), 0.05)*rotationScaleFactor)*Drivetrain.maxAngVelTeleop;
-    // Indexer control using operator controller buttons
 
     if (driver.getRawButton(3)) { // X button
       swerveLock = true; // Pressing the X-button causes the swerve modules to lock (for defense).
@@ -144,19 +142,15 @@ public class Robot extends TimedRobot {
       shooter.spinDown();
       indexer.stop();
     }
-    if (driver.getRawButton(5)){// Left bumper
+    if (driver.getLeftBumperButton()){
       indexer.jammed();
     }
-    if (driver.getRawButton(6)){//Right bumper(I believe)
-      indexer.start();
-      shooter.spinDown();
-    }
-    
     if (swerveLock) {
       swerve.xLock(); // Locks the swerve modules (for defense).
     } else {
       swerve.drive(xVel, yVel, angVel, true, 0.0, 0.0); // Drive at the velocity demanded by the controller.
     }
+
 
     // The following 3 calls allow the user to calibrate the position of the robot based on April Tag information. Should be called when the robot is stationary. Button 7 is "View", the right center button.
     if (driver.getRawButtonPressed(7)) {
@@ -235,12 +229,6 @@ public class Robot extends TimedRobot {
     swerve.calcPriorityLimelightIndex();
     System.out.println("swerve getPriorityLimelightIndex: " + swerve.getPriorityLimelightIndex());
     swerve.updateDash();
-    shooter.updateDash();
-    indexer.start(); // Tests starting the indexer.
-    indexer.stop(); // Tests stopping the indexer.
-    indexer.updateDash(); // Tests dashboard updates.
-    System.out.println("Indexer Sensor: " + indexer.getSensor());
-    System.out.println("Indexer Sensor Timer: " + indexer.getSensorTimer());
     updateDash();
   }
 }
