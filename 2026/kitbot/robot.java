@@ -120,6 +120,11 @@ public class Robot extends TimedRobot {
       swerve.addVisionEstimate(limelightIndex, true); // Checks to see ifs there are reliable April Tags in sight of the Limelight and updates the robot position on the field.
     }
     indexer.periodic();
+    if (indexer.getCurrentState() == Indexer.Mode.FORWARD) {
+        shooter.spinUp();
+    } else {
+        shooter.spinDown();
+    }
 
     if (driver.getRawButtonPressed(1)) boostMode = true; // A button sets boost mode. (100% speed up from default of 60%).
     if (driver.getRawButtonPressed(2)) boostMode = false; // B Button sets default mode (60% of full speed).
