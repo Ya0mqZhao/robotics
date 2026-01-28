@@ -57,30 +57,33 @@ public class Indexer {
       HopperTimer.restart();
     }
     switch(currState) {
-      case FORWARD://just going forward
-        IndexMotor.setControl(new VelocityVoltage(10.0).withEnableFOC(true));
-        if(HopperTimer.get() > 3.0 ){
-          currState = Mode.IDLE;
-        }
-        else if(ShooterTimer.get() > 10.0 && HopperTimer.get() < 2.0 ){
-          currState = Mode.JAM;
-          JamTimer.restart();
-        }
-        break;
-      case JAM://execute when sensor is on false for 5 second
-        IndexMotor.setControl(new VelocityVoltage(-10.0).withEnableFOC(true));
-        if (HopperTimer.get() >10.0 ) {
-          currState = Mode.IDLE;
-         }
-         else if (ShooterTimer.get() <1.0 && JamTimer.get() >10.0){
-          currState = Mode.FORWARD;
-         }
-        break;
-      case IDLE://just stops
-        IndexMotor.setControl(new VelocityVoltage(0.0).withEnableFOC(true));
-        break;
+        case FORWARD://just going forward
+            IndexMotor.setControl(new VelocityVoltage(10.0).withEnableFOC(true));
+            if(HopperTimer.get() > 3.0 ){
+                currState = Mode.IDLE;
+            }
+            else if(ShooterTimer.get() > 10.0 && HopperTimer.get() < 2.0 ){
+                currState = Mode.JAM;
+                JamTimer.restart();
+            }
+            break;
+        case JAM://execute when sensor is on false for 5 second
+            IndexMotor.setControl(new VelocityVoltage(-10.0).withEnableFOC(true));
+            if (HopperTimer.get() > 10.0) {
+                currState = Mode.IDLE;
+            }
+            else if (ShooterTimer.get() < 1.0 && JamTimer.get() > 10.0) {
+                currState = Mode.FORWARD;
+            }
+            else if (!getShooterSensor() && !getHopperSensor() && JamTimer.get() > 5.0) {
+                currState = Mode.IDLE;
+            }
+            break;
+        case IDLE://just stops
+            IndexMotor.setControl(new VelocityVoltage(0.0).withEnableFOC(true));
+            break;
     }
-  }
+}
 
   // Marks the Indexer as running forward (not shooting) and resets the jam timer.
   public void start() {
