@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
       swerve.addVisionEstimate(limelightIndex, true); // Checks to see ifs there are reliable April Tags in sight of the Limelight and updates the robot position on the field.
     }
     indexer.periodic();
-    if (indexer.getCurrentState() == Indexer.Mode.FORWARD) {
+    if (indexer.get.cState() == Indexer.Mode.FORWARD) {// need to know how to get indexer.get currstate
         shooter.spinUp();
     } else {
         shooter.spinDown();
