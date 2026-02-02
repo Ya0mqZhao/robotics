@@ -26,7 +26,7 @@ boolean isSpinUp = false;
   //Turns on motor
     public void spinUp() {
      spinUpAtRPM(4800);//need to be tested or else switch back to 👇
-     shootMotor.setControl(shooterMotorVelocityRequest.withVelocity(80).withEnableFOC(true));
+     //shootMotor.setControl(shooterMotorVelocityRequest.withVelocity(80).withEnableFOC(true));
     }
 
 
