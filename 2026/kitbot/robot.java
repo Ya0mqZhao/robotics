@@ -164,11 +164,12 @@ public class Robot extends TimedRobot {
     if (driver.getRawButton(7)) swerve.addCalibrationEstimate(swerve.getPriorityLimelightIndex(), false); // Left center button
     if (driver.getRawButtonReleased(7)) swerve.pushCalibration(false, 0.0); // Updates the position of the robot on the field based on previous calculations.  
     if (driver.getRawButtonPressed(8)) swerve.resetGyro(); // Right center button re-zeros the angle reading of the gyro to the current angle of the robot. Should be called if the gyroscope readings are no longer well correlated with the field.
-  }
+  
   if (driver.getRawButton(5)){ // Left trigger(I don't even know anymore, copilot said thats whata available)
     double targetRPM = calculateShooterRPM();
     shooter.spinUpAtRPM(targetRPM);
     indexer.start();
+  }
 }
   
   public void disabledInit() { 
@@ -213,6 +214,10 @@ public class Robot extends TimedRobot {
   }
 
   public double calculateShooterRPM() {
+    double hubX = 182.11 * 0.0254; // The x-position of the hub on the field in meters.
+    double hubY = 158.84 * 0.0254; // The y-position of the hub on the field in meters.
+    double robotX = swerve.getXPos(); // The current x-position of the robot on the field in meters.
+    double robotY = swerve.getYPos(); // The current y-position of the
     double distance = Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2));//distance to hub
     double minDistance = 2.0;//closest shooting distance in meter (need tested👇)
     double maxDistance = 5.0;//farthest shooting distance in meter
