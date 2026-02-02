@@ -214,10 +214,10 @@ public class Robot extends TimedRobot {
 
   public double calculateShooterRPM() {
     double distance = Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2));//distance to hub
-    double minDistance = 2.0;//closest shooting distance in meter 
+    double minDistance = 2.0;//closest shooting distance in meter (need tested👇)
     double maxDistance = 5.0;//farthest shooting distance in meter
     double minRPM = 3000.0;//RPM at minimum distance
-    double maxRPM = 5000.0;//RPM at maximum distance
+    double maxRPM = 5000.0;//RPM at maximum distance(need tested👆)
     if (distance < minDistance) {// If closer than minDistance, use minRPM
         return minRPM;
     }
