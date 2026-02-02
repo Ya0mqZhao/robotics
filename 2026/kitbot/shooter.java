@@ -24,41 +24,38 @@ boolean isSpinUp = false;
   }
 
   //Turns on motor
-  public void spinUp() {
-    shootMotor.setControl(shooterMotorVelocityRequest.withVelocity(100.0).withEnableFOC(true));// Sets the velocity of the motor in rotations per second.
-    isSpinUp = true;
-  }
+    public void spinUp() {
+        spinUpAtRPM(4800);
+    }
 
 
-  //Turn off motor
+  // Turn off motor
   public void spinDown() {
-    shootMotor.setControl(shooterMotorVelocityRequest.withVelocity(0.0).withEnableFOC(true)); // Sets the velocity of the motor in rotations per second.
+    shootMotor.setControl(shooterMotorVelocityRequest.withVelocity(0.0).withEnableFOC(true));
     isSpinUp = false;
   }
 
   public void spinUpAtRPM(double rpm) {
-      // Convert RPM to RPS (Rotations Per Second)
-       double rps = rpm / 60.0;
-      shootMotor.setControl(new VelocityVoltage(rps).withEnableFOC(true));
-       isSpinUp = true;
-   }
-    
-    // Keep your existing spinUp() for backward compatibility
-    public void spinUp() {
-        spinUpAtRPM(4800); // Your current 80 RPS = 4800 RPM
-    }
-}
-  // Publish Shooter information (Motor state, Velcocity) to SmartDashboard.
-  public void updateDash() {
-    SmartDashboard.putBoolean("Shoot motor is on", isSpinUp);
-    SmartDashboard.putNumber("Get Velocity", getVelocity());
+    double rps = rpm / 60.0;
+    shootMotor.setControl(new VelocityVoltage(rps).withEnableFOC(true));
+    isSpinUp = true;
   }
 
-  // Returns the motor velocity as a double.
-  private double getVelocity() {
+  // Publish Shooter information (Motor state, Velocity) to SmartDashboard.
+  public void updateDash() {
+    SmartDashboard.putBoolean("Shoot motor is on", isSpinUp);
+    SmartDashboard.putNumber("Shooter Velocity (RPS)", getVelocity());
+    SmartDashboard.putNumber("Shooter Velocity (RPM)", getVelocityRPM());
+  }
+  // Returns the motor velocity as a double in RPS (Rotations Per Second)
+  public double getVelocity() {
     return shooterVelocity.refresh().getValueAsDouble();
   }
-  
+  // Returns the motor velocity in RPM (Rotations Per Minute)
+  public double getVelocityRPM() {
+    return getVelocity() * 60.0;
+  }
+
   // Configs the motor settings and PID
   private void configMotor(TalonFX motor, boolean invert, double currentLimit) {
     TalonFXConfiguration motorConfigs = new TalonFXConfiguration();
