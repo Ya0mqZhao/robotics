@@ -239,6 +239,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Hub Headeding", getHubHeading());
     //SmartDashboard.putNumber("Speed Scale Factor", speedScaleFactor);
     //SmartDashboard.putNumber("Auto Stage", autoStage);
+    SmartDashboard.putNumber("Shooter Current RPM", shooter.getVelocityRPM());
+    SmartDashboard.putNumber("Shooter Target RPM", calculateShooterRPM());
   }
 
   // Helps prevent loop overruns on startup by running every user created command in every class before the match starts. Not sure why this helps, but it does.
