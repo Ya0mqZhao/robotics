@@ -1,0 +1,2 @@
+  private double[] distCalArray = { 1.0, 2.0, 5.0, 5.1, 8.5 }; // Stores the distance between the center of the robot and the center of the speaker in meters. Should be sorted with smallest distances first.
+  private double[] velCalArray = { 2000.0, 3400.0 , 3500.0, 4500.0, 5000.0 }; // Stores the velocity that corresponds with each distance value. This is the velocity should be at to make the shot in ().
