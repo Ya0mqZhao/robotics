@@ -247,6 +247,11 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putNumber("Auto Stage", autoStage);
     SmartDashboard.putNumber("Shooter Current RPM", shooter.getVelocityRPM());
     SmartDashboard.putNumber("Shooter Target RPM", calculateShooterRPM());
+    double hubX = 182.11 * 0.0254; // The x-position of the hub on the field in meters.
+    double hubY = 158.84 * 0.0254; // The y-position of the hub on the field in meters.
+    double robotX = swerve.getXPos(); // The current x-position of the robot on the field in meters.
+    double robotY = swerve.getYPos(); // The current y-position of the robot
+    double distance = Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2)); // distance to hub
     SmartDashboard.putNumber("Distance to Hub", distance);
   }
 
