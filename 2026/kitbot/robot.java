@@ -212,27 +212,32 @@ public class Robot extends TimedRobot {
       }
     }
   }
-
+  private double[] DistanceArray = { 1.0, 2.0, 5.0, 5.1, 8.5 }; // Distance array (need tested👈)
+  private double[] RPMArray = { 2000.0, 3400.0, 3500.0, 4500.0, 5000.0 }; // RPM array(need tested👈)
+  
   public double calculateShooterRPM() {
     double hubX = 182.11 * 0.0254; // The x-position of the hub on the field in meters.
     double hubY = 158.84 * 0.0254; // The y-position of the hub on the field in meters.
     double robotX = swerve.getXPos(); // The current x-position of the robot on the field in meters.
-    double robotY = swerve.getYPos(); // The current y-position of the
-    double distance = Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2));//distance to hub
-    double minDistance = 2.0;//closest shooting distance in meter (need tested👇)
-    double maxDistance = 5.0;//farthest shooting distance in meter
-    double minRPM = 3000.0;//RPM at minimum distance
-    double maxRPM = 5000.0;//RPM at maximum distance(need tested👆)
-    if (distance < minDistance) {// If closer than minDistance, use minRPM
-        return minRPM;
+    double robotY = swerve.getYPos(); // The current y-position of the robot
+    double distance = Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2)); // distance to hub
+    
+    if (distance >= DistanceArray[DistanceArray.length - 1]) {
+      return RPMArray[RPMArray.length - 1]; // Return RPM for largest distance
+    } 
+    else if (distance <= DistanceArray[0]) {
+      return RPMArray[0]; // Return RPM for smallest distance
+    } 
+    else {
+      int notnamed = -1; // Index for distance immediately smaller than current distance
+      for (int i = 0; i < DistanceArray.length - 1; i++) {
+        if (DistanceArray[i + 1] > distance && notnamed == -1) {
+          notnamed = i;
+        }
+      } 
+      return RPMArray[notnamed] + ((RPMArray[notnamed + 1] - RPMArray[notnamed]) / (DistanceArray[notnamed + 1] - DistanceArray[notnamed])) * (distance - DistanceArray[notnamed]);
     }
-    if (distance > maxDistance) { // If farther than maxDistance, use maxRPM  
-        return maxRPM;
-    }
-    double rpm = minRPM + (distance - minDistance) * (maxRPM - minRPM) / (maxDistance - minDistance);// RPM increases linearly with distance
-    return rpm;
   }
-
   // Publishes information to the dashboard.
   public void updateDash() {
     SmartDashboard.putBoolean("Boost Mode", boostMode);
