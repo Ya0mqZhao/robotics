@@ -45,8 +45,8 @@ boolean isSpinUp = false;
   // Publish Shooter information (Motor state, Velocity) to SmartDashboard.
   public void updateDash() {
     SmartDashboard.putBoolean("Shoot motor is on", isSpinUp);
-    SmartDashboard.putNumber("Shooter Velocity (RPS)", getVelocity());
-    SmartDashboard.putNumber("Shooter Velocity (RPM)", getVelocityRPM());
+    //SmartDashboard.putNumber("Shooter Velocity (RPS)", getVelocity());
+   // SmartDashboard.putNumber("Shooter Velocity (RPM)", getVelocityRPM());
   }
   // Returns the motor velocity as a double in RPS (Rotations Per Second)
   public double getVelocity() {
