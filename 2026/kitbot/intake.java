@@ -1,5 +1,5 @@
 package frc.robot;
-
+//remember to reference climber.java
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
