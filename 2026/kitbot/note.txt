@@ -3,4 +3,7 @@ it need to apply a voltage to both motor that causes them to go up, would probab
 then need to read velocity of motor and if the velocity of the motor stays at 0 or near 0 within at least or second or 2, then the system has been homed, and set both position of motor as 0
 
 case stow
-command both motor to be at a position of 0 and the roller to be a 0 velocity both left and right, left example: make sure that the right intake is up, wait till it's up, by position read, once read the position as up, command the left arm to go down. only after the position has been confirmed as zero
+command both motor to be at a position of 0 and the roller to be a 0 velocity both left and right
+
+case left/ right
+left example: make sure that the right intake is up, wait till it's up, by position read, once read the position as up, command the left arm to go down. only after the position has been confirmed as zero
