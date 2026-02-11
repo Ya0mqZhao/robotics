@@ -80,8 +80,7 @@ public void periodic() {
         break;
 
       case LEFT:
-        double rightSensorValue = rightArmSensor.getRange().getValueAsDouble();
-        if (rightSensorValue > 0.67) {//check real sensor value for an acceptable value before tossing it onto the field
+        if (rightArmSensor.getRange().getValueAsDouble(); > 0.67) {//check real sensor value for an acceptable value before tossing it onto the field
           desiredRightArmPosition = 0.0;
           desiredLeftArmPosition = getLeftArmPosition();
           desiredLeftRollerVelocity = 0.0;
@@ -98,8 +97,7 @@ public void periodic() {
         break;
 
       case RIGHT:
-        double leftSensorValue = leftArmSensor.getRange().getValueAsDouble();
-        if (leftSensorValue > 0.67) {//check real sensor value for an acceptable value before tossing it onto the field
+        if (leftArmSensor.getRange().getValueAsDouble(); > 0.67) {//check real sensor value for an acceptable value before tossing it onto the field
           desiredLeftArmPosition = 0.0;
           desiredRightArmPosition = getRightArmPosition();
           desiredLeftRollerVelocity = 0.0;
@@ -114,7 +112,7 @@ public void periodic() {
           }
         }
         break;
-      case STOW:
+      case STOW://(it should stay up right?)
         desiredLeftArmPosition = 0.0;
         desiredRightArmPosition = 0.0;
         desiredLeftRollerVelocity = 0.0;
