@@ -68,7 +68,7 @@ public class Intake {
         double rightVel = Math.abs(rightIntakeDeploy.getVelocity().getValueAsDouble());
         
         if (leftVel > 0.05 || rightVel > 0.05) {
-          intakeTimer.reset();
+          intakeTimer.restart();
         }
         if (intakeTimer.hasElapsed(1.0)) {
           leftIntakeDeploy.setPosition(0.0, 0.03);
@@ -89,7 +89,7 @@ public class Intake {
           desiredLeftArmPosition = getLeftArmPosition();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0;
-          intakeTimer.reset();
+          intakeTimer.restart();
         }
         break;
       case RIGHT:
@@ -103,7 +103,7 @@ public class Intake {
           desiredRightArmPosition = getRightArmPosition();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0; 
-          intakeTimer.reset();
+          intakeTimer.restart();
         }
         break;
         
@@ -136,21 +136,21 @@ public class Intake {
   public void leftIntake() {
     if (isHomed) {
       currMode = Mode.LEFT;
-      intakeTimer.reset();
+      intakeTimer.restart();
     }
   }
 
   public void rightIntake() {
     if (isHomed) {
       currMode = Mode.RIGHT;
-      intakeTimer.reset();
+      intakeTimer.restart();
     }
   }
 
   public void stowIntake() {
     if (isHomed) {
       currMode = Mode.STOW;
-      intakeTimer.reset();
+      intakeTimer.restart();
     }
   }
 
@@ -228,8 +228,6 @@ public class Intake {
     SmartDashboard.putNumber("Right Arm Desired", getRightArmDesiredPosition());
     SmartDashboard.putNumber("Right Roller Vel", getRightRollerVelocity());
     SmartDashboard.putNumber("Right Sensor", rightArmSensor.getDistance().getValueAsDouble());
-    SmartDashboard.putNumber("ARM_UP_THRESHOLD", ARM_UP_THRESHOLD);
-    SmartDashboard.putNumber("ARM_DOWN_THRESHOLD", ARM_DOWN_THRESHOLD);
   }
   
   private void configMotor(TalonFX motor, boolean invert, double currentLimit, boolean isArmMotor) {
