@@ -31,7 +31,6 @@ public class Intake {
   private final CANrange rightArmSensor = new CANrange(30, canivore);
   private final Timer intakeTimer = new Timer();
   private boolean isHomed = false;
-  
   // Control requests
   private final PositionVoltage armPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
   private final VelocityVoltage rollerVelocityRequest = new VelocityVoltage(0.0).withEnableFOC(true);
@@ -57,7 +56,7 @@ public class Intake {
     intakeTimer.reset();
   }
 
-public void periodic() {
+  public void periodic() {
     switch (currMode) {
       case HOME:
         leftIntakeDeploy.setControl(voltageOutRequest.withOutput(-2.0));
@@ -80,41 +79,47 @@ public void periodic() {
         break;
 
       case LEFT:
-        if (rightArmSensor.getRange().getValueAsDouble(); > 0.67) {//check real sensor value for an acceptable value before tossing it onto the field
+        if (rightArmSensor.getDistance().getValueAsDouble() < 0.67) {
+          desiredRightArmPosition = 0.0;
+          desiredLeftArmPosition = 2.0;
+          desiredLeftRollerVelocity = 10.0;
+          desiredRightRollerVelocity = 0.0;
+        } else {
           desiredRightArmPosition = 0.0;
           desiredLeftArmPosition = getLeftArmPosition();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0;
           intakeTimer.reset();
-        } else {
-          if (intakeTimer.hasElapsed(0.5)) {
-            desiredRightArmPosition = 0.0;
-            desiredLeftArmPosition = 2.0;
-            desiredLeftRollerVelocity = 10.0;
-            desiredRightRollerVelocity = 0.0;
-          }
         }
         break;
-
       case RIGHT:
-        if (leftArmSensor.getRange().getValueAsDouble(); > 0.67) {//check real sensor value for an acceptable value before tossing it onto the field
+        if (leftArmSensor.getDistance().getValueAsDouble() < 0.67) {//check real value
+          desiredLeftArmPosition = 0.0;
+          desiredRightArmPosition = 2.0;
+          desiredLeftRollerVelocity = 0.0;
+          desiredRightRollerVelocity = 10.0;
+        } else {
           desiredLeftArmPosition = 0.0;
           desiredRightArmPosition = getRightArmPosition();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0; 
           intakeTimer.reset();
-        } else {
-          if (intakeTimer.hasElapsed(0.5)) {
-            desiredLeftArmPosition = 0.0;
-            desiredRightArmPosition = 2.0;
-            desiredLeftRollerVelocity = 0.0;
-            desiredRightRollerVelocity = 10.0;
-          }
         }
         break;
-      case STOW://(it should stay up right?)
-        desiredLeftArmPosition = 0.0;
-        desiredRightArmPosition = 0.0;
+        
+      case STOW:
+        double currentLeftSensor = leftArmSensor.getDistance().getValueAsDouble();
+        double currentRightSensor = rightArmSensor.getDistance().getValueAsDouble();
+        if (currentLeftSensor > 0.5) {
+          desiredLeftArmPosition = 0.0;
+        } else {
+          desiredLeftArmPosition = 0.0;
+        }
+        if (currentRightSensor > 0.5) {
+          desiredRightArmPosition = 0.0;
+        } else {
+          desiredRightArmPosition = 0.0;
+        }
         desiredLeftRollerVelocity = 0.0;
         desiredRightRollerVelocity = 0.0;
         break;
@@ -154,7 +159,7 @@ public void periodic() {
   }
 
   public double getLeftArmPosition() {
-    return leftArmSensor.getRange().getValueAsDouble();
+    return leftArmSensor.getDistance().getValueAsDouble();
   }
 
   public double getLeftArmDesiredPosition() {
@@ -218,11 +223,13 @@ public void periodic() {
     SmartDashboard.putNumber("Left Arm Position", getLeftArmPosition());
     SmartDashboard.putNumber("Left Arm Desired", getLeftArmDesiredPosition());
     SmartDashboard.putNumber("Left Roller Vel", getLeftRollerVelocity());
-    SmartDashboard.putNumber("Left Sensor", leftArmSensor.getRange().getValueAsDouble());
+    SmartDashboard.putNumber("Left Sensor", leftArmSensor.getDistance().getValueAsDouble());
     SmartDashboard.putNumber("Right Arm Position", getRightArmPosition());
     SmartDashboard.putNumber("Right Arm Desired", getRightArmDesiredPosition());
     SmartDashboard.putNumber("Right Roller Vel", getRightRollerVelocity());
-    SmartDashboard.putNumber("Right Sensor", rightArmSensor.getRange().getValueAsDouble());
+    SmartDashboard.putNumber("Right Sensor", rightArmSensor.getDistance().getValueAsDouble());
+    SmartDashboard.putNumber("ARM_UP_THRESHOLD", ARM_UP_THRESHOLD);
+    SmartDashboard.putNumber("ARM_DOWN_THRESHOLD", ARM_DOWN_THRESHOLD);
   }
   
   private void configMotor(TalonFX motor, boolean invert, double currentLimit, boolean isArmMotor) {
