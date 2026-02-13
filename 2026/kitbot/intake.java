@@ -15,6 +15,9 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAlternateEncoder;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class Intake {
   public enum Mode {HOME, LEFT, RIGHT, STOW}
@@ -30,8 +33,8 @@ public class Intake {
   private final TalonFX leftIntakeDeploy = new TalonFX(16, canivore);
   private final TalonFX leftIntake = new TalonFX(17, canivore);
   // These are MaxSplineThroughbore Encoders, not CANrange
-  private final CANrange leftArmSensor = new CANrange(29, canivore);
-  private final CANrange rightArmSensor = new CANrange(30, canivore);
+  private final CANSparkMax leftArmSensor = new CANSparkMax(29, MotorType.kBrushless);
+  private final CANSparkMax rightArmSensor = new CANSparkMax(30, MotorType.kBrushless);
   private final Timer intakeTimer = new Timer();
   private boolean isHomed = false;
   
