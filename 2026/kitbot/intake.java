@@ -27,14 +27,14 @@ public class Intake {
   private final TalonFX rightIntake = new TalonFX(15, canivore);
   private final TalonFX leftIntakeDeploy = new TalonFX(16, canivore);
   private final TalonFX leftIntake = new TalonFX(17, canivore);
-  private final CANrange leftArmSensor = new CANrange(29, canivore);
-  private final CANrange rightArmSensor = new CANrange(30, canivore);
+  private final CANrange leftArmSensor = new CANrange(29, canivore); // Code Review: Not CANrange, MaxSplineThroughbore Encoder
+  private final CANrange rightArmSensor = new CANrange(30, canivore); // Code Review: Not CANrange, MaxSplineThroughbore Encoder 
   private final Timer intakeTimer = new Timer();
   private boolean isHomed = false;
   // Control requests
-  private final PositionVoltage armPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
-  private final VelocityVoltage rollerVelocityRequest = new VelocityVoltage(0.0).withEnableFOC(true);
-  private final VoltageOut voltageOutRequest = new VoltageOut(0.0);
+  private final PositionVoltage armPositionRequest = new PositionVoltage(0.0).withEnableFOC(true); // Code Review: Put more requests per motor stated 
+  private final VelocityVoltage rollerVelocityRequest = new VelocityVoltage(0.0).withEnableFOC(true); // Code Review: Put more requests per motor stated 
+  private final VoltageOut voltageOutRequest = new VoltageOut(0.0); // Code Review: Put more requests per motor stated 
 
   public Intake() {
     configMotor(rightIntakeDeploy, true, 40.0, true);
@@ -47,13 +47,13 @@ public class Intake {
   }
 
   public void init() {
-    currMode = Mode.HOME;
-    desiredLeftArmPosition = 0.0;
-    desiredLeftRollerVelocity = 0.0;
-    desiredRightArmPosition = 0.0;
-    desiredRightRollerVelocity = 0.0;
-    isHomed = false;
-    intakeTimer.reset();
+    currMode = Mode.HOME; // Code Review: there are two moments of this starting in home state?
+    desiredLeftArmPosition = 0.0; // Code Review: there are two moments of this
+    desiredLeftRollerVelocity = 0.0; // Code Review: there are two moments of this
+    desiredRightArmPosition = 0.0; // Code Review: there are two moments of this
+    desiredRightRollerVelocity = 0.0; // Code Review: there are two moments of this
+    isHomed = false; // Code Review: there are two moments of this
+    intakeTimer.reset(); // Code Review: not reset but restart, since we want to start counting time from the moment we enter the homing state
   }
 
   public void periodic() {
@@ -65,11 +65,12 @@ public class Intake {
         rightIntake.setControl(rollerVelocityRequest.withVelocity(0.0));
         
         double leftVel = Math.abs(leftIntakeDeploy.getVelocity().getValueAsDouble());
-        double rightVel = Math.abs(rightIntakeDeploy.getVelocity().getValueAsDouble());
+        double rightVel = Math.abs(rightIntakeDeploy.getVelocity().getValueAsDouble()); // Code Review: too meny object created, forces garbige collection, cause robot to lag. suggestion: Make a (satis) signal in the start.
         
-        if (leftVel > 0.05 || rightVel > 0.05) {
+        if (leftVel > 0.05 || rightVel > 0.05) { // Code Review: Puting left and right together just put separately
           intakeTimer.restart();
         }
+
         if (intakeTimer.hasElapsed(1.0)) {
           leftIntakeDeploy.setPosition(0.0, 0.03);
           rightIntakeDeploy.setPosition(0.0, 0.03);
@@ -79,7 +80,7 @@ public class Intake {
         break;
 
       case LEFT:
-        if (rightArmSensor.getDistance().getValueAsDouble() < 0.67) {
+        if (rightArmSensor.getDistance().getValueAsDouble() < 0.67) { 
           desiredRightArmPosition = 0.0;
           desiredLeftArmPosition = 2.0;
           desiredLeftRollerVelocity = 10.0;
@@ -89,9 +90,10 @@ public class Intake {
           desiredLeftArmPosition = getLeftArmPosition();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0;
-          intakeTimer.restart();
+          intakeTimer.restart(); // Code review: WHAT POINT
         }
         break;
+
       case RIGHT:
         if (leftArmSensor.getDistance().getValueAsDouble() < 0.67) {//check real value
           desiredLeftArmPosition = 0.0;
@@ -103,14 +105,15 @@ public class Intake {
           desiredRightArmPosition = getRightArmPosition();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0; 
-          intakeTimer.restart();
+          intakeTimer.restart(); // Code review: WHAT POINT
         }
         break;
         
       case STOW:
         double currentLeftSensor = leftArmSensor.getDistance().getValueAsDouble();
-        double currentRightSensor = rightArmSensor.getDistance().getValueAsDouble();
-        if (currentLeftSensor > 0.5) {
+        double currentRightSensor = rightArmSensor.getDistance().getValueAsDouble(); // Code Review: Dont use sensor, use moter postion.
+
+        if (currentLeftSensor > 0.5) { // Code Review: Dont use this, go to zero position directly. From line 115-135
           desiredLeftArmPosition = 0.0;
         } else {
           desiredLeftArmPosition = 0.0;
@@ -131,6 +134,7 @@ public class Intake {
       rightIntakeDeploy.setControl(armPositionRequest.withPosition(desiredRightArmPosition));
       rightIntake.setControl(rollerVelocityRequest.withVelocity(desiredRightRollerVelocity));
     }
+
   }
 
   public void leftIntake() {
@@ -260,3 +264,5 @@ public class Intake {
     sensor.getConfigurator().apply(sensorConfigs, 0.03);
   }
 }
+
+//add another system where if sensor reads range too far and arm intake both distance too far, try to set arm back to position 0 and stop everything.
