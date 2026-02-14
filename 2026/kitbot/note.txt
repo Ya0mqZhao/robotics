@@ -8,28 +8,4 @@ command both motor to be at a position of 0 and the roller to be a 0 velocity bo
 case left/ right
 left example: make sure that the right intake is up, wait till it's up, by position read, once read the position as up, command the left arm to go down. only after the position has been confirmed as zero
 
- *  Executing task: gradlew build   -Dorg.gradle.java.home="C:\Users\Public\wpilib\2026\jdk" 
-
-Starting a Gradle Daemon (subsequent builds will be faster)
-
-FAILURE: Build failed with an exception.
-
-* Where:
-Build file 'C:\Users\tinkr\Documents\GitHub\REBUILT-2026\build.gradle' line: 3
-
-* What went wrong:
-An exception occurred applying plugin request [id: 'edu.wpi.first.GradleRIO', version: '2026.2.1']
-> Failed to apply plugin class 'edu.wpi.first.gradlerio.wpi.WPIPlugin'.
-   > Could not create an instance of type edu.wpi.first.gradlerio.wpi.WPIExtension.
-      > Vendor Dependency REVLib has invalid year 2025. Expected to be 2026. Reach out to the vendor to get a new version of the dependency. Attempting to modify an existing dependency will break at runtime, and will result in loss of support from the WPILib team.
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
-
-BUILD FAILED in 22s
-
- *  The terminal process "cmd.exe /d /c gradlew build   -Dorg.gradle.java.home="C:\Users\Public\wpilib\2026\jdk"" terminated with exit code: 1. 
- *  Terminal will be reused by tasks, press any key to close it. 
+https://software-metadata.revrobotics.com/REVLib-2026.json
