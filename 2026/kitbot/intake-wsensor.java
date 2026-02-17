@@ -13,11 +13,11 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkMaxAlternateEncoder;
+//import com.revrobotics.CANSparkMax;
+//import com.revrobotics.CANSparkLowLevel.MotorType;
+//import com.revrobotics.RelativeEncoder;
+//import com.revrobotics.SparkPIDController;
+//import com.revrobotics.SparkMaxAlternateEncoder;
 
 public class Intake {
   public enum Mode {HOME, LEFT, RIGHT, STOW}
@@ -33,15 +33,15 @@ public class Intake {
   private final TalonFX leftIntakeDeploy = new TalonFX(16, canivore);
   private final TalonFX leftIntake = new TalonFX(17, canivore);
   // REV Through Bore Encoder configuration
-  private static final SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
+//  private static final SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   private static final int kCPR = 8192;
   // These are REV Through Bore Encoders connected to CANSparkMax controllers
-  private final CANSparkMax leftArmSensor = new CANSparkMax(29, MotorType.kBrushless);
-  private final CANSparkMax rightArmSensor = new CANSparkMax(30, MotorType.kBrushless);
-  private final RelativeEncoder leftArmEncoder;
-  private final RelativeEncoder rightArmEncoder;
-  private final SparkPIDController leftArmPID;
-  private final SparkPIDController rightArmPID;
+ // private final CANSparkMax leftArmSensor = new CANSparkMax(29, MotorType.kBrushless);
+//  private final CANSparkMax rightArmSensor = new CANSparkMax(30, MotorType.kBrushless);
+ // private final RelativeEncoder leftArmEncoder;
+ // private final RelativeEncoder rightArmEncoder;
+//  private final SparkPIDController leftArmPID;
+ // private final SparkPIDController rightArmPID;
   
   private final Timer leftIntakeTimer = new Timer();
   private final Timer rightIntakeTimer = new Timer();
@@ -66,16 +66,16 @@ public class Intake {
     configMotor(leftIntake, true, 60.0, false);
     
     // Configure left arm sensor as REV Through Bore Encoder
-    leftArmSensor.restoreFactoryDefaults();
-    leftArmEncoder = leftArmSensor.getAlternateEncoder(kAltEncType, kCPR);
-    leftArmPID = leftArmSensor.getPIDController();
-    leftArmPID.setFeedbackDevice(leftArmEncoder);
+   // leftArmSensor.restoreFactoryDefaults();
+   // leftArmEncoder = leftArmSensor.getAlternateEncoder(kAltEncType, kCPR);
+   // leftArmPID = leftArmSensor.getPIDController();
+   // leftArmPID.setFeedbackDevice(leftArmEncoder);
     
     // Configure right arm sensor as REV Through Bore Encoder
-    rightArmSensor.restoreFactoryDefaults();
-    rightArmEncoder = rightArmSensor.getAlternateEncoder(kAltEncType, kCPR);
-    rightArmPID = rightArmSensor.getPIDController();
-    rightArmPID.setFeedbackDevice(rightArmEncoder);
+   // rightArmSensor.restoreFactoryDefaults();
+   // rightArmEncoder = rightArmSensor.getAlternateEncoder(kAltEncType, kCPR);
+   // rightArmPID = rightArmSensor.getPIDController();
+   // rightArmPID.setFeedbackDevice(rightArmEncoder);
     
     leftArmVelocity = leftIntakeDeploy.getVelocity();
     rightArmVelocity = rightIntakeDeploy.getVelocity();
@@ -129,7 +129,7 @@ public class Intake {
         break;
 
       case LEFT:
-        if (rightArmEncoder.getPosition() < 0.67) {
+        if (rightArmEncoderPosition.getValueAsDouble() < 0.67) {
           desiredRightArmPosition = 0.0;
           desiredLeftArmPosition = 2.0;
           desiredLeftRollerVelocity = 10.0;
@@ -143,7 +143,7 @@ public class Intake {
         break;
 
       case RIGHT:
-        if (leftArmEncoder.getPosition() < 0.67) {
+        if (leftArmEncoderPosition.getValueAsDouble() < 0.67) {
           desiredLeftArmPosition = 0.0;
           desiredRightArmPosition = 2.0;
           desiredLeftRollerVelocity = 0.0;
@@ -194,13 +194,13 @@ public class Intake {
     }
   }
 
-  public Mode getMode() {
+  public Mode getMode() { 
     return currMode;
   }
 
-  public double getLeftArmSensorPosition() {
-    return leftArmEncoder.getPosition();
-  }
+ // public double getLeftArmSensorPosition() {
+  //  return leftArmEncoder.getPosition();
+ // }
 
   public double getLeftArmEncoderPosition() {
     return leftArmEncoderPosition.getValueAsDouble();
@@ -268,11 +268,11 @@ public class Intake {
     SmartDashboard.putNumber("Left Arm Encoder", getLeftArmEncoderPosition());
     SmartDashboard.putNumber("Left Arm Desired", getLeftArmDesiredPosition());
     SmartDashboard.putNumber("Left Roller Vel", getLeftRollerVelocity());
-    SmartDashboard.putNumber("Left Sensor", getLeftArmSensorPosition());
+  //  SmartDashboard.putNumber("Left Sensor", getLeftArmSensorPosition());
     SmartDashboard.putNumber("Right Arm Encoder", getRightArmEncoderPosition());
     SmartDashboard.putNumber("Right Arm Desired", getRightArmDesiredPosition());
     SmartDashboard.putNumber("Right Roller Vel", getRightRollerVelocity());
-    SmartDashboard.putNumber("Right Sensor", rightArmEncoder.getPosition());
+   // SmartDashboard.putNumber("Right Sensor", rightArmEncoder.getPosition());
   }
   
   private void configMotor(TalonFX motor, boolean invert, double currentLimit, boolean isArmMotor) {
