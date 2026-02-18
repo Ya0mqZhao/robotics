@@ -27,11 +27,12 @@ public class Intake {
   private final TalonFX rightIntake = new TalonFX(15, canivore);
   private final TalonFX leftIntakeDeploy = new TalonFX(16, canivore);
   private final TalonFX leftIntake = new TalonFX(17, canivore);
+  //mr shaman said not using the sensor no more...IDK TALK TO HIM🤷‍♀️
   
   private final Timer leftIntakeTimer = new Timer();
   private final Timer rightIntakeTimer = new Timer();
   private boolean isHomed = false;
-  
+  // Code Review: Put more requests per motor stated  - here👇, do I look like chatgpt?🥀 so demanding..."pUt MoRe ReQuEsT"(mocking)
   private final PositionVoltage leftArmPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
   private final PositionVoltage rightArmPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
   private final VelocityVoltage leftRollerVelocityRequest = new VelocityVoltage(0.0).withEnableFOC(true);
@@ -60,7 +61,7 @@ public class Intake {
   }
 
   public void init() {
-    if (currMode != Mode.HOME) {
+    if (currMode != Mode.HOME) {//if not at mode.home, set mode and arm positions at 0
       currMode = Mode.HOME;
       desiredLeftArmPosition = 0.0;
       desiredLeftRollerVelocity = 0.0;
@@ -84,7 +85,7 @@ public class Intake {
         rightIntakeDeploy.setControl(rightArmVoltageRequest.withOutput(-2.0));
         leftIntake.setControl(leftRollerVelocityRequest.withVelocity(0.0));
         rightIntake.setControl(rightRollerVelocityRequest.withVelocity(0.0));
-        if (Math.abs(leftArmVelocity.getValueAsDouble()) > 0.05) {
+        if (Math.abs(leftArmVelocity.getValueAsDouble()) > 0.05) {// Code Review: Puting left and right together just put separately -...ts grammer bruh, timer breakdown👇
           leftIntakeTimer.restart();
         }
         if (Math.abs(rightArmVelocity.getValueAsDouble()) > 0.05) {
@@ -112,6 +113,7 @@ public class Intake {
           desiredLeftArmPosition = leftArmEncoderPosition.getValueAsDouble();
           desiredLeftRollerVelocity = 0.0;
           desiredRightRollerVelocity = 0.0;
+          //intakeTimer.restart(); // Code review: WHAT POINT - FINE REMOVED 👇GEE YELLING IN ALL CAPS?
         }
         break;
 
@@ -128,7 +130,7 @@ public class Intake {
           desiredRightRollerVelocity = 0.0; 
         }
         break;
-      case STOW:
+      case STOW: // Code Review: Dont use this, go to zero position directly. From line 115-135 - bruh 🫱💻🫲 here, write the code bro
         desiredLeftArmPosition = 0.0;
         desiredRightArmPosition = 0.0;
         desiredLeftRollerVelocity = 0.0;
@@ -266,3 +268,4 @@ public class Intake {
     motor.getConfigurator().apply(motorConfigs, 0.03);
   }
 }
+//add another system where if sensor reads range too far and arm intake both distance too far, try to set arm back to position 0 and stop everything. (shaman said not doing it)
