@@ -85,7 +85,7 @@ public class Intake {
         rightIntakeDeploy.setControl(rightArmVoltageRequest.withOutput(-2.0));
         leftIntake.setControl(leftRollerVelocityRequest.withVelocity(0.0));
         rightIntake.setControl(rightRollerVelocityRequest.withVelocity(0.0));
-        if (Math.abs(leftArmVelocity.getValueAsDouble()) > 0.05) {// Code Review: Puting left and right together just put separately -...ts grammer bruh, timer breakdown👇
+        if (Math.abs(leftArmVelocity.getValueAsDouble()) > 0.05) {// Code Review: Puting left and right together just put separately -...ts grammar bruh, timer breakdown👇
           leftIntakeTimer.restart();
         }
         if (Math.abs(rightArmVelocity.getValueAsDouble()) > 0.05) {
