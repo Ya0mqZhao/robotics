@@ -93,7 +93,7 @@ public class Intake {
         }
 
         if (leftIntakeTimer.get() >1.0 && rightIntakeTimer.get() > 1.0) {
-          leftIntakeDeploy.setPosition(0.0, 0.03);
+          leftIntakeDeploy.setPosition(0.0, 0.03); 
           rightIntakeDeploy.setPosition(0.0, 0.03);
           isHomed = true;
           currMode = Mode.STOW;
@@ -103,7 +103,7 @@ public class Intake {
         break;
 
       case LEFT:
-        if (rightArmEncoderPosition.getValueAsDouble() < 0.67) {
+        if (rightArmEncoderPosition.getValueAsDouble() < 0.67) {//fact check value at the end
           desiredRightArmPosition = 0.0;
           desiredLeftArmPosition = 2.0;
           desiredLeftRollerVelocity = 10.0;
@@ -118,7 +118,7 @@ public class Intake {
         break;
 
       case RIGHT:
-        if (leftArmEncoderPosition.getValueAsDouble() < 0.67) {
+        if (leftArmEncoderPosition.getValueAsDouble() < 0.67) {//fact check value at the end
           desiredLeftArmPosition = 0.0;
           desiredRightArmPosition = 2.0;
           desiredLeftRollerVelocity = 0.0;
@@ -232,16 +232,16 @@ public class Intake {
 
   public void updateDash() {
     SmartDashboard.putString("Intake Mode", currMode.toString());
-    SmartDashboard.putBoolean("Intake Ready", isReady());
+    //SmartDashboard.putBoolean("Intake Ready", isReady());
     SmartDashboard.putBoolean("Intake Homed", isHomed);
     SmartDashboard.putNumber("Left Intake Timer", leftIntakeTimer.get());
     SmartDashboard.putNumber("Right Intake Timer", rightIntakeTimer.get());
     SmartDashboard.putNumber("Left Arm Encoder", getLeftArmEncoderPosition());
-    SmartDashboard.putNumber("Left Arm Desired", getLeftArmDesiredPosition());
-    SmartDashboard.putNumber("Left Roller Vel", getLeftRollerVelocity());
+    //SmartDashboard.putNumber("Left Arm Desired", getLeftArmDesiredPosition());
+    //SmartDashboard.putNumber("Left Roller Vel", getLeftRollerVelocity());
     SmartDashboard.putNumber("Right Arm Encoder", getRightArmEncoderPosition());
-    SmartDashboard.putNumber("Right Arm Desired", getRightArmDesiredPosition());
-    SmartDashboard.putNumber("Right Roller Vel", getRightRollerVelocity());
+    //SmartDashboard.putNumber("Right Arm Desired", getRightArmDesiredPosition());
+    //SmartDashboard.putNumber("Right Roller Vel", getRightRollerVelocity());
   }
   
   private void configMotor(TalonFX motor, boolean invert, double currentLimit, boolean isArmMotor) {
