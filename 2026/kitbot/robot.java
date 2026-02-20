@@ -155,11 +155,11 @@ public class Robot extends TimedRobot {
     if (driver.getRightBumperButton()) {
       // Code Review: How does the driver set the intake to HOME?
       // Code Review: should we be setting intake.currMode directly?
-      intake.currMode = Intake.Mode.RIGHT; // Right bumper runs the intake on the right side.
+      intake.rightIntake; // Right bumper runs the intake on the right side.
     }
     if (driver.getLeftBumperButton()) {
       // Code Review: should we be setting intake.currMode directly?
-      intake.currMode = Intake.Mode.LEFT; // Left bumper runs the intake on the left side.
+      intake.leftIntake; // Left bumper runs the intake on the left side.
     }
     
     // The following 3 calls allow the user to calibrate the position of the robot based on April Tag information. Should be called when the robot is stationary. Button 7 is "View", the right center button.
