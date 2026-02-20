@@ -81,6 +81,7 @@ public class Intake {
     
     switch (currMode) {
       case HOME:
+        // Code Review: How would we transition to the home -> stowed states midgame?
         leftIntakeDeploy.setControl(leftArmVoltageRequest.withOutput(-2.0));
         rightIntakeDeploy.setControl(rightArmVoltageRequest.withOutput(-2.0));
         leftIntake.setControl(leftRollerVelocityRequest.withVelocity(0.0));
@@ -102,7 +103,7 @@ public class Intake {
         }
         break;
 
-      case LEFT:
+      case LEFT://if current state is left, and left button clicked, go to stow, 
         if (rightArmEncoderPosition.getValueAsDouble() < 0.67) {//fact check value at the end
           desiredRightArmPosition = 0.0;
           desiredLeftArmPosition = 2.0;
@@ -145,7 +146,7 @@ public class Intake {
     }
   }
 
-  public void leftIntake() {
+  public void leftIntake() {//more if statements for logics on left and right intakes
     if (isHomed) {
       currMode = Mode.LEFT;
       leftIntakeTimer.restart();
@@ -162,6 +163,7 @@ public class Intake {
   }
 
   public void stowIntake() {
+    // Code Review: What should happen if isHomed is False?
     if (isHomed) {
       currMode = Mode.STOW;
       leftIntakeTimer.restart();
