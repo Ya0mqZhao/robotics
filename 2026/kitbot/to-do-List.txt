@@ -1,0 +1,4 @@
+1. get rid of all operator related code and change to only driver controller.
+2. review all the robot code make sure nothing is in eachother's way.
+3. review especially shooter.java
+4. ask for control manual.
