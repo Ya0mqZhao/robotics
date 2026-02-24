@@ -166,7 +166,7 @@ public class Robot extends TimedRobot {
     if (driver.getPOV() == 0) climber.moveUp(); // D-pad up moves the climber up.
     if (driver.getPOV() == 180) climber.moveDown(); // D-pad down moves the climber down.
 
-    shooter.setHoodPosition((operator.getLeftY() + 1.0) / 20.0 + 0.02); // remove operator stick to driver. keep all other functions?👇
+    shooter.setHoodPosition((operator.getLeftY() + 1.0) / 20.0 + 0.02); // remove operator stick to driver. keep all other functions? neded auto adjustment for both speed and hood position/angle based on distance to hub
 
     if(operator.getAButton()) {
       shooter.spinUp(3600.0);
