@@ -152,16 +152,7 @@ public class Robot extends TimedRobot {
     } else {
       swerve.drive(xVel, yVel, angVel, true, 0.0, 0.0); // Drive at the velocity demanded by the controller.
     }
-    if (driver.getRightBumperButton()) {
-      // Code Review: How does the driver set the intake to HOME?
-      // Code Review: should we be setting intake.currMode directly?
-      intake.rightIntake; // Right bumper runs the intake on the right side.
-    }
-    if (driver.getLeftBumperButton()) {
-      // Code Review: should we be setting intake.currMode directly?
-      intake.leftIntake; // Left bumper runs the intake on the left side.
-    }
-    
+
     // The following 3 calls allow the user to calibrate the position of the robot based on April Tag information. Should be called when the robot is stationary. Button 7 is "View", the right center button.
     if (driver.getRawButtonPressed(7)) {
       swerve.calcPriorityLimelightIndex();
@@ -174,6 +165,20 @@ public class Robot extends TimedRobot {
 
     if (driver.getPOV() == 0) climber.moveUp(); // D-pad up moves the climber up.
     if (driver.getPOV() == 180) climber.moveDown(); // D-pad down moves the climber down.
+
+    shooter.setHoodPosition((operator.getLeftY() + 1.0) / 20.0 + 0.02); // remove operator stick to driver. keep all other functions?👇
+
+    if(operator.getAButton()) {
+      shooter.spinUp(3600.0);
+      if (shooter.isAtSpeed()) {
+        indexer.start();
+      } else {
+        indexer.stop();
+      }
+    } else {
+      shooter.spinDown();
+      indexer.stop();
+    }
   }
   
   public void disabledInit() { 
