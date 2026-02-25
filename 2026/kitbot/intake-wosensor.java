@@ -262,6 +262,13 @@ public class Robot extends TimedRobot {
              (distanceArray[lowerIndex + 1] - distanceArray[lowerIndex])) * (distance - distanceArray[lowerIndex]);
     }
   }
+  public double getDistanceToHub() {
+    double hubX = 182.11 * 0.0254;
+    double hubY = 158.84 * 0.0254;
+    double robotX = swerve.getXPos();
+    double robotY = swerve.getYPos();
+    return Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2));
+  }
 
   // Publishes information to the dashboard.
   public void updateDash() {
