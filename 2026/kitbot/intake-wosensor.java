@@ -169,8 +169,17 @@ public class Robot extends TimedRobot {
     // remove operator stick to driver. keep all other functions? neded auto adjustment for both speed and hood position/angle based on distance to hub
 
     if(driver.getAButton()) {
+      if (swerve.getXPos() < 4.0) {
+        //if in allance zone go according to calculations from arrays
       shooter.spinUp(calculateShooterRPM()); // A button spins up the shooter to the appropriate RPM based on distance to the hub.
       shooter.setHoodPosition(calculateHoodAngle()); // Sets the hood angle based on distance to the hub.
+      }
+      else {
+        //if out of alliance zone just shoot at max RPM and hood angle
+        shooter.spinUp(5000.0);
+        shooter.setHoodPosition(30.0);
+      }
+
       if (shooter.isAtSpeed()) {
         indexer.start();
       } else {
