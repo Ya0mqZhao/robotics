@@ -169,7 +169,8 @@ public class Robot extends TimedRobot {
     // remove operator stick to driver. keep all other functions? neded auto adjustment for both speed and hood position/angle based on distance to hub
 
     if(driver.getAButton()) {
-      shooter.spinUp(3600.0);
+      shooter.spinUp(calculateShooterRPM()); // A button spins up the shooter to the appropriate RPM based on distance to the hub.
+      shooter.setHoodPosition(calculateHoodAngle()); // Sets the hood angle based on distance to the hub.
       if (shooter.isAtSpeed()) {
         indexer.start();
       } else {
@@ -218,6 +219,7 @@ public class Robot extends TimedRobot {
 
   private double[] distanceArray = { 1.0, 2.0, 5.0, 5.1, 8.5 }; // Distance array (need tested👈) in meters(doesnt really matter though)
   private double[] RPMArray = { 2000.0, 3400.0, 3500.0, 4500.0, 5000.0 }; // RPM array(need tested👈)
+  private double[] hoodAngleArray = { 0.0, 10.0, 20.0, 25.0, 30.0 }; // Hood angle array (need tested👈) in degrees.
   public double calculateShooterRPM() {
     double hubX = 182.11 * 0.0254; // The x-position of the hub on the field in meters.
     double hubY = 158.84 * 0.0254; // The y-position of the hub on the field in meters.
@@ -241,8 +243,7 @@ public class Robot extends TimedRobot {
       return RPMArray[lowerIndex] + ((RPMArray[lowerIndex + 1] - RPMArray[lowerIndex]) / (distanceArray[lowerIndex + 1] - distanceArray[lowerIndex])) * (distance - distanceArray[lowerIndex]);
     }
   }
-
-    public double calculateHoodAngle() {
+      public double calculateHoodAngle() {
     double distance = getDistanceToHub();
     
     if (distance >= distanceArray[distanceArray.length - 1]) {
@@ -269,6 +270,7 @@ public class Robot extends TimedRobot {
     double robotY = swerve.getYPos();
     return Math.sqrt(Math.pow(hubX - robotX, 2) + Math.pow(hubY - robotY, 2));
   }
+
 
   // Publishes information to the dashboard.
   public void updateDash() {
