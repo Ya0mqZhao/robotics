@@ -242,6 +242,27 @@ public class Robot extends TimedRobot {
     }
   }
 
+    public double calculateHoodAngle() {
+    double distance = getDistanceToHub();
+    
+    if (distance >= distanceArray[distanceArray.length - 1]) {
+      return hoodAngleArray[hoodAngleArray.length - 1];
+    } 
+    else if (distance <= distanceArray[0]) {
+      return hoodAngleArray[0];
+    } 
+    else {
+      int lowerIndex = -1;
+      for (int i = 0; i < distanceArray.length - 1; i++) {
+        if (distanceArray[i + 1] > distance && lowerIndex == -1) {
+          lowerIndex = i;
+        }
+      } 
+      return hoodAngleArray[lowerIndex] + ((hoodAngleArray[lowerIndex + 1] - hoodAngleArray[lowerIndex]) / 
+             (distanceArray[lowerIndex + 1] - distanceArray[lowerIndex])) * (distance - distanceArray[lowerIndex]);
+    }
+  }
+
   // Publishes information to the dashboard.
   public void updateDash() {
     SmartDashboard.putBoolean("Boost Mode", boostMode);
