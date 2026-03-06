@@ -1,5 +1,9 @@
 package frc.robot;
 
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
@@ -18,6 +22,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -50,6 +58,17 @@ public class Shooter {
   private double desiredRPMSim = 0;
   public static final double hoodGearRatio = 1;
 
+  // Shoot-on-the-fly data structures that will reference Robot's arrays
+  private double[] distanceRPMArray = {2.0, 6.0}; // Default values, will be updated from Robot
+  private double[] RPMArray = {2500.0, 3800.0}; // Default values, will be updated from Robot
+  private double[] distanceArray = {2.0, 3.0, 4.0, 5.0, 6.0}; // Default values, will be updated from Robot
+  private double[] hoodArray = {0.05, 0.0625, 0.07, 0.065, 0.06}; // Default values, will be updated from Robot
+  
+  // Precomputed LUTs for shoot-on-the-fly
+  private final NavigableMap<Double, Double> RPM_VELOCITY_TO_DISTANCE = new TreeMap<>();
+  private final NavigableMap<Double, Double> HOOD_VELOCITY_TO_DISTANCE = new TreeMap<>();
+  private boolean lutInitialized = false;
+
   // Initialize Shooter: configure motor, and obtain a data for velocity
   public Shooter() {
     configHoodEncoder(hoodEncoder);
@@ -64,6 +83,188 @@ public class Shooter {
 	  ParentDevice.optimizeBusUtilizationForAll(shootMotorLeft, hoodMotor, hoodEncoder);
   }
   
+  // Method to update tuning data from Robot class
+  public void updateTuningData(double[] distanceRPM, double[] rpm, double[] distance, double[] hood) {
+    this.distanceRPMArray = distanceRPM;
+    this.RPMArray = rpm;
+    this.distanceArray = distance;
+    this.hoodArray = hood;
+    
+    // Rebuild velocity LUTs with new data
+    buildVelocityLUTs();
+  }
+
+  // Build velocity-to-effective-distance LUTs for shoot-on-the-fly
+  private void buildVelocityLUTs() {
+    RPM_VELOCITY_TO_DISTANCE.clear();
+    HOOD_VELOCITY_TO_DISTANCE.clear();
+    
+    // Build RPM LUT: velocity = distance / timeOfFlight, but since we don't have timeOfFlight in arrays,
+    // we'll use a simplified approach: velocity is proportional to distance * RPM factor
+    // This is an approximation - you may need to adjust based on your actual shooter characteristics
+    for (int i = 0; i < distanceRPMArray.length; i++) {
+      double dist = distanceRPMArray[i];
+      double rpm = RPMArray[i];
+      // Approximate velocity as proportional to RPM (higher RPM = higher muzzle velocity)
+      // You may need to calibrate this factor (0.1) based on real data
+      double velocity = rpm * 0.1; 
+      RPM_VELOCITY_TO_DISTANCE.put(velocity, dist);
+    }
+    
+    // Build Hood LUT
+    for (int i = 0; i < distanceArray.length; i++) {
+      double dist = distanceArray[i];
+      double hoodPos = hoodArray[i];
+      // Approximate velocity based on hood position (different mapping than RPM)
+      double velocity = hoodPos * 100.0; // Scale factor - calibrate this!
+      HOOD_VELOCITY_TO_DISTANCE.put(velocity, dist);
+    }
+    
+    lutInitialized = true;
+  }
+
+  public ShooterResult calculateShootOnTheFly(
+      Translation2d robotPosition,
+      Translation2d robotVelocity,
+      Translation2d goalPosition,
+      double latencyCompensation,
+      boolean useRPM) {
+
+    if (!lutInitialized) {
+      buildVelocityLUTs();
+    }
+
+    // 1) Future position (optional)
+    Translation2d futurePos = robotPosition.plus(robotVelocity.times(latencyCompensation));
+
+    // 2) Vector to goal in FIELD frame
+    Translation2d toGoal = goalPosition.minus(futurePos);
+    double distance = toGoal.getNorm();
+
+    // Guard
+    if (distance < 1e-6) {
+      return new ShooterResult(new Rotation2d(), 0.0, 0.0);
+    }
+
+    // 3) Get baseline params from appropriate arrays
+    double baselineValue;
+    double minDistance, maxDistance;
+    double[] distArray, valueArray;
+    
+    if (useRPM) {
+      distArray = distanceRPMArray;
+      valueArray = RPMArray;
+    } else {
+      distArray = distanceArray;
+      valueArray = hoodArray;
+    }
+    
+    minDistance = distArray[0];
+    maxDistance = distArray[distArray.length - 1];
+    
+    // Clamp distance and interpolate baseline value
+    double clampedDist = MathUtil.clamp(distance, minDistance, maxDistance);
+    baselineValue = interpolateValue(clampedDist, distArray, valueArray);
+
+    // 4) Direction to goal
+    Translation2d targetDirection = toGoal.div(distance);
+
+    // 5) Calculate radial velocity component (toward/away from target)
+    double vRadial = robotVelocity.getX() * targetDirection.getX()
+                   + robotVelocity.getY() * targetDirection.getY();
+
+    // 6) Required velocity along line-to-goal (baseline - radial component)
+    double requiredVelocity1D = baselineValue - vRadial;
+
+    // 7) Limit how much the velocity can change to avoid spikes
+    double maxExtraMps = 3.5; 
+    requiredVelocity1D = MathUtil.clamp(
+        requiredVelocity1D,
+        baselineValue - maxExtraMps,
+        baselineValue + maxExtraMps
+    );
+
+    // 8) Convert required velocity to effective distance, then to required value
+    double effectiveDistance;
+    if (useRPM) {
+      effectiveDistance = velocityToEffectiveDistance(requiredVelocity1D, RPM_VELOCITY_TO_DISTANCE);
+    } else {
+      effectiveDistance = velocityToEffectiveDistance(requiredVelocity1D, HOOD_VELOCITY_TO_DISTANCE);
+    }
+    
+    double clampedEff = MathUtil.clamp(effectiveDistance, minDistance, maxDistance);
+    double requiredValue = interpolateValue(clampedEff, distArray, valueArray);
+
+    // 9) Calculate turret angle (same for both cases)
+    // Build desired target velocity vector toward goal
+    Translation2d targetVelocity = targetDirection.times(baselineValue);
+    Translation2d shotVelocity = targetVelocity.minus(robotVelocity);
+    Rotation2d turretFieldAngle = shotVelocity.getAngle();
+
+    return new ShooterResult(turretFieldAngle, requiredValue, effectiveDistance);
+  }
+
+  /**
+   * Linear interpolation helper
+   */
+  private double interpolateValue(double distance, double[] distArray, double[] valueArray) {
+    if (distance <= distArray[0]) return valueArray[0];
+    if (distance >= distArray[distArray.length - 1]) return valueArray[valueArray.length - 1];
+    
+    for (int i = 0; i < distArray.length - 1; i++) {
+      if (distance >= distArray[i] && distance <= distArray[i + 1]) {
+        double t = (distance - distArray[i]) / (distArray[i + 1] - distArray[i]);
+        return valueArray[i] + t * (valueArray[i + 1] - valueArray[i]);
+      }
+    }
+    return valueArray[0];
+  }
+
+  /**
+   * Converts required velocity to effective distance using velocity LUT
+   */
+  private double velocityToEffectiveDistance(double velocity, NavigableMap<Double, Double> velocityLUT) {
+    Map.Entry<Double, Double> floor = velocityLUT.floorEntry(velocity);
+    Map.Entry<Double, Double> ceil = velocityLUT.ceilingEntry(velocity);
+
+    if (floor == null) {
+      return velocityLUT.firstEntry().getValue();
+    }
+    if (ceil == null) {
+      return velocityLUT.lastEntry().getValue();
+    }
+    if (ceil.getKey().equals(floor.getKey())) {
+      return ceil.getValue();
+    }
+
+    // Interpolate distance between the two surrounding velocity keys
+    double v0 = floor.getKey();
+    double d0 = floor.getValue();
+    double v1 = ceil.getKey();
+    double d1 = ceil.getValue();
+
+    double t = (velocity - v0) / (v1 - v0);
+    return MathUtil.interpolate(d0, d1, t);
+  }
+
+  // Convenience methods for RPM-based compensation
+  public ShooterResult calculateShootOnTheFlyRPM(
+      Translation2d robotPosition,
+      Translation2d robotVelocity,
+      Translation2d goalPosition,
+      double latencyCompensation) {
+    return calculateShootOnTheFly(robotPosition, robotVelocity, goalPosition, latencyCompensation, true);
+  }
+
+  // Convenience methods for hood-based compensation
+  public ShooterResult calculateShootOnTheFlyHood(
+      Translation2d robotPosition,
+      Translation2d robotVelocity,
+      Translation2d goalPosition,
+      double latencyCompensation) {
+    return calculateShootOnTheFly(robotPosition, robotVelocity, goalPosition, latencyCompensation, false);
+  }
+
   // Turns on motor. Sets the speed of the motor in rotations per minute.
   public void spinUp() {
     desiredRPMSim = shootingRPM;
@@ -214,4 +415,7 @@ public class Shooter {
 
     motor.getConfigurator().apply(motorConfigs, 0.03);
   }
+
+  // Record class for shooter results
+  public static record ShooterResult(Rotation2d turretFieldAngle, double requiredValue, double effectiveDistance) {}
 }
