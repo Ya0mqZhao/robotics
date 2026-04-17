@@ -167,16 +167,17 @@ public class Robot extends TimedRobot {
         intake.rightIntake();
       }
     }
-    if (driver.getRightTriggerAxis(); > 0.05) { // Small deadzone to prevent accidental spin
+    if (driver.getRightTriggerAxis() > 0.05) { // Small deadzone to prevent accidental spin
       double targetRPM = 1000.0 + (triggerValue * 4800.0); // 1000 to 5800 RPM
       if (targetRPM < 1500.0) {
         targetRPM = 1500.0; // Minimum 1500 RPM to ensure flywheel spins reliably
       }
+    }
     // Apply deadbands correctly
     if (Math.abs(forward) < 0.1) forward = 0;
     if (Math.abs(strafe) < 0.1) strafe = 0;
-    if (Math.abs(-driver.getRightX();) < 0.1) rotate = 0;
-    swerve.drive(-driver.getLeftY(); * 0.6 * Drivetrain.maxVelTeleop, strafe * 0.6 * Drivetrain.maxVelTeleop, -driver.getRightX(); * 0.5 * Drivetrain.maxAngVelTeleop, true, 0.0, 0.0);  
+    if (Math.abs(-driver.getRightX()) < 0.1) rotate = 0;
+    swerve.drive(-driver.getLeftY() * 0.6 * Drivetrain.maxVelTeleop, strafe * 0.6 * Drivetrain.maxVelTeleop, -driver.getRightX() * 0.5 * Drivetrain.maxAngVelTeleop, true, 0.0, 0.0);  
     // The following calls are used to update the subsystems and should be called every period.
     indexer.periodic();
     intake.periodic();
