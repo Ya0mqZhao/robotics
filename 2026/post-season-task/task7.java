@@ -143,17 +143,14 @@ public class Robot extends TimedRobot {
     if (driver.getPOV() == 0) { // D-pad UP: 5000 RPM
       shooter.setShootingRPM(5000.0);
       shooter.spinUp();
-      SmartDashboard.putString("Shooter Speed", "HIGH - 5000 RPM");
     } 
     else if (driver.getPOV() == 90) { // D-pad RIGHT: 3500 RPM
       shooter.setShootingRPM(3500.0);
       shooter.spinUp();
-      SmartDashboard.putString("Shooter Speed", "MEDIUM - 3500 RPM");
     }
     else if (driver.getPOV() == 180) { // D-pad DOWN: 2000 RPM
       shooter.setShootingRPM(2000.0);
       shooter.spinUp();
-      SmartDashboard.putString("Shooter Speed", "LOW - 2000 RPM");
     }
     // Arm deployment using the Left/Right bumper buttons.
     if (driver.getLeftBumperButtonPressed()) {
