@@ -167,13 +167,13 @@ public class Robot extends TimedRobot {
         intake.rightIntake();
       }
     }
-    if (driver.getRightTriggerAxis(); > 0.05) { // Small deadzone to prevent accidental spin
+    if (driver.getRightTriggerAxis() > 0.05) { // Small deadzone to prevent accidental spin
       double targetRPM = 1000.0 + (triggerValue * 4800.0); // 1000 to 5800 RPM
       // Optional: Add a minimum speed threshold for reliable shooting
       if (targetRPM < 1500.0) {
         targetRPM = 1500.0; // Minimum 1500 RPM to ensure flywheel spins reliably
       }
-        
+    }
     // The following calls are used to update the subsystems and should be called every period.
     indexer.periodic();
     intake.periodic();
