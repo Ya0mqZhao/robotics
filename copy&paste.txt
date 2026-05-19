@@ -1,1 +1,55 @@
-﻿﻿﻿﻿﻿﻿﻿﻿ERROR ﻿﻿ 103 ﻿﻿ CTR: Firm Vers could not be retrieved. Use Phoenix Tuner X to check that the device is running Phoenix 5 firmware (22.X), the device ID is correct, the specified CAN bus is correct, and the device is powered. ﻿﻿ Victor SPX 2 ﻿﻿﻿
+package frc.robot;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class Launcher {
+    private static final double PSI_Scale = 49.8;
+    private static final double PSI_Offset = -26.1;
+
+    // FIXED: Added "rio" CAN bus name to both Victor SPX constructors
+    private final VictorSPX motor1 = new VictorSPX(5, "rio"); // Activates VictorSPX on CAN ID 5 (mini)
+    private final VictorSPX motor2 = new VictorSPX(2, "rio"); // Activates VictorSPX on CAN ID 2 (big)
+    
+    private final AnalogPotentiometer voltRead = new AnalogPotentiometer(0, 5, 0); // potentiometer on analog port 0
+    private double PSIRead = (PSI_Scale * voltRead.get()) + PSI_Offset; // Calculates PSI from potentiometer voltage
+    //private boolean buttonState = false;
+    //private double PSI = 50.0; //Desired PSI value
+
+    public Launcher() {
+        //Constructor for the Launcher class
+        motor1.configFactoryDefault();
+        motor2.configFactoryDefault();
+    }
+
+    public void setOutputSolenid(double PercentOutput) {
+        // FIXED: Changed VictorSPXControlMode to ControlMode
+        motor1.set(ControlMode.PercentOutput, PercentOutput);
+    }
+    
+    public void startOutputSolenoid() {
+        motor1.set(ControlMode.PercentOutput, 1.0);
+    }
+
+    public void stopOutputSolenoid() {
+        motor1.set(ControlMode.PercentOutput, 0.0);
+    }
+
+    public void setInputSolenoid(double PercentOutput) {
+        // FIXED: Changed VictorSPXControlMode to ControlMode
+        motor2.set(ControlMode.PercentOutput, PercentOutput);
+    }
+
+    public double getPSI() {
+        return PSIRead;
+    }
+
+    public void updateDashboard() {
+        SmartDashboard.putNumber("Launcher PSI", getPSI());
+        //SmartDashboard.putNumber("Volt Read", voltRead.get());
+    }
+}
