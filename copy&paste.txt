@@ -1,0 +1,1 @@
+﻿﻿﻿﻿﻿﻿﻿﻿ERROR ﻿﻿ 103 ﻿﻿ CTR: Firm Vers could not be retrieved. Use Phoenix Tuner X to check that the device is running Phoenix 5 firmware (22.X), the device ID is correct, the specified CAN bus is correct, and the device is powered. ﻿﻿ Victor SPX 2 ﻿﻿﻿
